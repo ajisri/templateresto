@@ -80,7 +80,8 @@ const GrainOverlay = () => <div className={styles.grainOverlay} />;
 const AmbienceShift = () => <div className={styles.gradientShift} />;
 
 // ─── SCENE 01 — OPENING SHOT ──────────────────────────────────────
-// Pattern: Expanding Frame (Clip-path) + Collapsing Focus (Intro Height)
+// Wide establishing shot. Slow push-in via scale on scroll.
+// Director note: "Jangan langsung jual. Bangun mood dulu."
 const Scene01_Opening = () => {
     const ref = useRef(null);
     const { scrollYProgress } = useScroll({
@@ -88,90 +89,105 @@ const Scene01_Opening = () => {
         offset: ["start start", "end start"]
     });
 
-    // 1. Background Clip-path Expansion (from 20% to 0% for more dramatic fulfillment)
-    // Synchronized to complete at 0.45 progress
-    const clipPath = useTransform(scrollYProgress, [0, 0.45], ["inset(20%)", "inset(0%)"]);
-
-    // 2. Intro Image Height (from 475px to 200px) & Parallax
-    // Sync with background reveal
-    const introHeight = useTransform(scrollYProgress, [0, 0.45], ["475px", "200px"]);
-    const introY = useTransform(scrollYProgress, [0, 1], ["0vh", "50vh"]); // Deeper parallax
-
-    // 3. Title Parallax & Dynamic Reveal
-    const titleY = useTransform(scrollYProgress, [0, 1], ["0vh", "-60vh"]);
-    const titleOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-
-    const overlayOpacity = useTransform(scrollYProgress, [0, 0.45], [0.4, 0.85]);
+    const scale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+    const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.3, 0.8]);
 
     return (
         <section ref={ref} className={styles.scene01}>
-            <div className={styles.heroSticky}>
-                {/* Background Layer (True Res Establishing Shot) */}
-                <motion.div className={styles.heroMedia} style={{ clipPath }}>
-                    <img
-                        src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=2500"
-                        alt="The Tavern — Cinematic establishing"
-                        className={styles.heroImage}
-                        fetchPriority="high"
-                    />
-                    <ParticleField />
-                </motion.div>
-
-                {/* Intro Focus Layer (Parallax Focus) */}
-                <div className={styles.introContainer}>
-                    <motion.div
-                        className={styles.introFocusWrap}
-                        style={{ height: introHeight, y: introY }}
-                    >
-                        <img
-                            src="https://images.unsplash.com/photo-1534073828943-f801091bb18c?auto=format&fit=crop&q=80&w=1200"
-                            alt="intro depth focus"
-                            className={styles.introDetailImg}
-                        />
-                        <div className={styles.introOverlay} />
-                    </motion.div>
-
-                    <motion.div className={styles.introText} style={{ y: titleY, opacity: titleOpacity }}>
-                        <span className={styles.introTag}>EST. MCMXCII</span>
-                        <h1 className={styles.introTitle}>THE TAVERN</h1>
-                        <span className={styles.introLocation}>SEMARANG // ORIGIN</span>
-                    </motion.div>
-                </div>
-
-                {/* HUD & Technical UI */}
-                <div className={styles.heroMinimalUI}>
-                    <div className={styles.hudLine}>
-                        <span className={styles.hudLabel}>REC [●] // LIVE_FEED</span>
-                        <span className={styles.hudValue}>06:12:35</span>
-                    </div>
-                    <div className={styles.hudLine}>
-                        <span className={styles.hudLabel}>CAM_01 // 35MM_PRIME</span>
-                        <span className={styles.hudValue}>ISO_800 // F1.4</span>
-                    </div>
-                </div>
-
-                <div className={styles.heroScrollIndicator}>
-                    <motion.div
-                        className={styles.scrollDot}
-                        animate={{ y: [0, 15, 0] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                    <span>PULL_DOWN_TO_ENTER</span>
-                </div>
-
+            <motion.div className={styles.heroMedia} style={{ scale }}>
+                <img
+                    src="/images/template5/hero-bg.jpg"
+                    alt="The Tavern — establishing shot"
+                    className={styles.heroImage}
+                    fetchPriority="high"
+                />
+                <img
+                    src="/images/template5/hero-ambience.jpg"
+                    alt="Tavern warm ambience"
+                    className={styles.heroImageAlt}
+                    decoding="async"
+                />
+                <ParticleField />
                 <motion.div className={styles.heroOverlay} style={{ opacity: overlayOpacity }} />
+            </motion.div>
+            <div className={styles.heroMinimalUI}>
+                <div className={styles.hudLine}>
+                    <span className={styles.hudLabel}>REC [●] // LIVE_FEED</span>
+                    <span className={styles.hudValue}>06:44:32</span>
+                </div>
+                <div className={styles.hudLine}>
+                    <span className={styles.hudLabel}>CAM_01 // 35MM_PRIME</span>
+                    <span className={styles.hudValue}>ISO_800 // F1.4</span>
+                </div>
+                <div className={styles.hudLine}>
+                    <span className={styles.hudLabel}>COORDS</span>
+                    <span className={styles.hudValue}>-7.0142 / 110.4215</span>
+                </div>
+            </div>
+            <div className={styles.heroScrollIndicator}>
+                <motion.div
+                    className={styles.scrollDot}
+                    animate={{ y: [0, 15, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <span>PULL_DOWN_TO_ENTER</span>
+            </div>
+            <div className={styles.heroSceneTag}>
+                <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.4 }}
+                    transition={{ delay: 2, duration: 2 }}
+                    className={styles.sceneTag}
+                >
+                    SCENE 01 // ESTABLISHING
+                </motion.span>
             </div>
         </section>
     );
 };
 
-// ─── SCENE 02 — TRANSITION SPACE ──────────────────────────────────
-// Bridging the intro expansion to the story.
-const Scene02_Transition = () => {
+// ─── SCENE 02 — TITLE REVEAL ──────────────────────────────────────
+// Static frame. Typography enters like film title.
+// Rule: "Tidak ada gerakan lain. Silence = power."
+const Scene02_TitleReveal = () => {
+    const titleLines = ["THE", "TAVERN"];
+
     return (
-        <div className={styles.scene02Space}>
-            {/* Visual silence between the heavy intro and narrative */}
-        </div>
+        <section className={styles.scene02}>
+            <div className={styles.titleRevealContent}>
+                <div className={styles.cinematicHeader}>
+                    {titleLines.map((line, i) => (
+                        <div key={i} className={styles.titleLineWrap}>
+                            {line.split("").map((char, j) => (
+                                <motion.span
+                                    key={j}
+                                    className={styles.heroTitleChar}
+                                    initial={{ opacity: 0, scale: 1.2, filter: "blur(10px)" }}
+                                    whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                                    transition={{
+                                        duration: 1.5,
+                                        delay: i * 0.4 + j * 0.08,
+                                        ease: [0.16, 1, 0.3, 1]
+                                    }}
+                                    viewport={{ once: true }}
+                                >
+                                    {char}
+                                </motion.span>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+                <motion.p
+                    className={styles.heroSubtitle}
+                    initial={{ opacity: 0, letterSpacing: "1em" }}
+                    whileInView={{ opacity: 1, letterSpacing: "0.6em" }}
+                    transition={{ duration: 2, delay: 1.2 }}
+                    viewport={{ once: true }}
+                >
+                    EST. MCMXCII // SEMARANG
+                </motion.p>
+            </div>
+        </section>
     );
 };
 
@@ -546,7 +562,7 @@ export default function Template5() {
             <AmbienceShift />
 
             <Scene01_Opening />
-            <Scene02_Transition />
+            <Scene02_TitleReveal />
             <Scene03_Transition />
             <Scene04_Legacy />
             {/* SCENE 05 = bgColor transition, no physical section */}

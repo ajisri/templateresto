@@ -149,122 +149,59 @@
 }
 
 /* ═══════════════════════════════════════════════════
-   SCENE 01 — OPENING SHOT (RE-ENGINEERED)
-   Expanding Frame Interaction
+   SCENE 01 — OPENING SHOT
+   Wide establishing. Slow push-in. Ambience gelap, warm highlights.
    ═══════════════════════════════════════════════════ */
 .scene01 {
     position: relative;
-    height: 180vh;
-    /* Scroll room for the scrub */
-    background: #000;
-}
-
-.heroSticky {
-    position: sticky;
-    top: 0;
     height: 100vh;
-    width: 100%;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .heroMedia {
     position: absolute;
-    width: 100%;
-    height: 140vh;
-    /* Match pattern for vertical overshoot */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
+    transform-origin: center center;
     background: #050505;
-    z-index: 1;
-    will-change: clip-path;
+    /* Aspect ratio for LCP stability */
+    aspect-ratio: 16/9;
 }
 
 .heroImage {
-    min-width: 100%;
-    min-height: 100%;
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    filter: brightness(0.6) contrast(1.1);
+    /* Prevent paint delay */
+    content-visibility: visible;
 }
 
-.introContainer {
-    display: flex;
-    justify-content: center;
-    position: relative;
-    margin-top: 15vh;
-    /* Adjusted for better visual balance with sticky */
-    z-index: 5;
-    width: 100%;
-}
-
-.introFocusWrap {
+.heroImageAlt {
     position: absolute;
-    width: 350px;
-    height: 475px;
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
-    will-change: height, transform;
-    background: #0d0d0d;
-    filter: brightness(0.7);
-}
-
-.introDetailImg {
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: top;
+    display: block;
+    opacity: 0;
+    animation: heroCrossFade 12s ease-in-out infinite;
 }
 
-.introOverlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.6));
-}
+@keyframes heroCrossFade {
 
-.introText {
-    position: relative;
-    z-index: 10;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    width: 60%;
-    text-align: center;
-}
+    0%,
+    40% {
+        opacity: 0;
+    }
 
-.introTitle {
-    font-family: var(--tm5-font-display);
-    font-size: 7.5vw;
-    /* Match pattern's 7vw for massive cinematic feel */
-    line-height: 0.85;
-    margin: 0;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: #fff;
-    white-space: nowrap;
-    text-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-}
+    50%,
+    90% {
+        opacity: 1;
+    }
 
-.introTag {
-    font-size: 0.75rem;
-    letter-spacing: 0.8em;
-    color: var(--tm5-accent);
-    font-weight: 500;
-}
-
-.introLocation {
-    font-size: 0.7rem;
-    letter-spacing: 0.5em;
-    color: var(--tm5-text-muted);
-    font-weight: 400;
+    100% {
+        opacity: 0;
+    }
 }
 
 /* Particles (Hack 03: Controlled Imperfection) */
@@ -285,6 +222,7 @@
     filter: blur(0.5px);
 }
 
+/* Varied particles for organic feel */
 .particle:nth-child(even) {
     width: 2px;
     height: 2px;
@@ -299,20 +237,20 @@
             rgba(10, 10, 10, 0.7) 0%,
             transparent 30%,
             transparent 70%,
-            rgba(10, 10, 10, 1) 100%);
-    z-index: 12;
-    pointer-events: none;
+            rgba(10, 10, 10, 0.9) 100%);
+    z-index: 3;
 }
 
 .heroMinimalUI {
     position: absolute;
     top: 5vh;
     left: 5vw;
-    z-index: 20;
+    z-index: 10;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     opacity: 0.6;
+    /* Reduced prominence */
 }
 
 .hudLine {
@@ -342,7 +280,7 @@
     position: absolute;
     bottom: 3.5rem;
     right: 4rem;
-    z-index: 20;
+    z-index: 10;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -360,11 +298,63 @@
     box-shadow: 0 0 10px var(--tm5-accent);
 }
 
+.heroSceneTag {
+    position: absolute;
+    bottom: 3.5rem;
+    left: 4rem;
+    z-index: 10;
+}
+
 /* ═══════════════════════════════════════════════════
-   SCENE 02 — TRANSITION SPACE
+   SCENE 02 — TITLE REVEAL
+   Static frame. Typography enters like film title.
+   Rule: Silence = power.
    ═══════════════════════════════════════════════════ */
-.scene02Space {
-    height: 30vh;
+.scene02 {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+.titleRevealContent {
+    text-align: center;
+    pointer-events: none;
+    width: 100%;
+}
+
+.cinematicHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.titleLineWrap {
+    display: flex;
+    justify-content: center;
+    gap: 0.5vw;
+}
+
+.heroTitleChar {
+    font-family: var(--tm5-font-display);
+    font-size: clamp(3rem, 11vw, 12rem);
+    line-height: 0.9;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+    display: inline-block;
+}
+
+.heroSubtitle {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6em;
+    color: var(--tm5-accent);
+    margin-top: 2.5rem;
+    font-weight: 400;
 }
 
 /* ═══════════════════════════════════════════════════
