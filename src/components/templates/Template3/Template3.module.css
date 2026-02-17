@@ -1,0 +1,356 @@
+.container {
+    background-color: #050505;
+    color: #e0e0e0;
+    min-height: 200vh;
+    font-family: var(--font-display);
+    overflow-x: hidden;
+    position: relative;
+    transition: background-color 1s ease;
+    /* Essential for smooth GSAP transitions */
+}
+
+/* --- HERO --- */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gridLines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.lineVertical {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.meta {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: #666;
+    z-index: 10;
+}
+
+.title {
+    font-size: 11vw;
+    line-height: 0.85;
+    text-align: center;
+    font-weight: 700;
+    z-index: 10;
+    mix-blend-mode: exclusion;
+}
+
+/* --- MANIFESTO --- */
+.manifesto {
+    padding: 10rem 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bigText {
+    font-size: 3rem;
+    max-width: 1200px;
+    text-align: center;
+    line-height: 1.2;
+    color: #888;
+}
+
+.highlight {
+    color: #fff;
+    font-style: italic;
+}
+
+/* --- HORIZONTAL SECTION --- */
+.horizontalSection {
+    height: 100vh;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.hTrack {
+    display: flex;
+    padding-left: 10vw;
+    gap: 5vw;
+    width: max-content;
+    /* Important for horizontal scroll */
+}
+
+.hItem {
+    width: 60vh;
+    height: 70vh;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.hImgContainer {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.hImg {
+    width: 100%;
+    height: 120%;
+    /* For parallax */
+    background-size: cover;
+    background-position: center;
+}
+
+.hOverlay {
+    position: absolute;
+    bottom: 2rem;
+    left: 2rem;
+    z-index: 2;
+}
+
+.hOverlay h3 {
+    font-size: 3rem;
+    color: #fff;
+    margin: 0;
+}
+
+.hOverlay p {
+    font-family: var(--font-body);
+    color: #aaa;
+    margin-top: 0.5rem;
+}
+
+/* --- GALLERY SECTION --- */
+.gallerySection {
+    padding: 15rem 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    position: relative;
+    min-height: 250vh;
+    /* Extra height for passing effect */
+}
+
+.galleryHeader {
+    margin-bottom: 6rem;
+    text-align: center;
+}
+
+.galleryHeader h2 {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+}
+
+.masonryGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4rem;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.masonryItem {
+    width: 25vw;
+    position: absolute;
+    z-index: 1;
+}
+
+.aspectRatio {
+    width: 100%;
+    padding-bottom: 125%;
+    /* Portrait */
+    background: #111;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 1rem;
+    box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mnImg {
+    width: 100%;
+    height: 120%;
+    background-size: cover;
+    background-position: center;
+}
+
+.caption {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* --- MENU SECTION --- */
+.menuSection {
+    padding: 8rem 2rem;
+    background: transparent;
+}
+
+.menuPostersGrid {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 4rem auto 0;
+}
+
+.menuPoster {
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 3rem 0;
+    display: flex;
+    flex-direction: column;
+    /* height: 450px; Remove fixed height for cleaner list view */
+    background: transparent;
+    position: relative;
+    transition: opacity 0.3s;
+    overflow: hidden;
+}
+
+.menuPoster::before {
+    display: none;
+    /* remove gradient hover */
+}
+
+.menuPoster:hover::before {
+    opacity: 0;
+}
+
+.posterGlow {
+    display: none;
+    /* remove glow */
+}
+
+.menuPoster:hover .posterGlow {
+    opacity: 0;
+}
+
+.menuPoster:hover {
+    transform: none;
+    box-shadow: none;
+    opacity: 0.7;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.posterHeader {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 4rem;
+}
+
+.menuPrice {
+    font-weight: 700;
+}
+
+.menuName {
+    font-size: 3.5rem;
+    /* Bigger */
+    line-height: 0.9;
+    margin-bottom: 2rem;
+    font-weight: 900;
+    /* Black weight */
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+    /* Tighter */
+}
+
+.menuDesc {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: #888;
+    line-height: 1.4;
+    flex-grow: 1;
+}
+
+.posterFooter {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    color: #444;
+    letter-spacing: 0.1em;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 1.5rem;
+}
+
+
+
+/* --- FOOTER --- */
+.footer {
+    padding: 6rem 2rem;
+    background: #050505;
+    border-top: 1px solid #333;
+}
+
+.footer h2 {
+    font-size: 10vw;
+    text-align: center;
+    margin-bottom: 4rem;
+    color: #222;
+}
+
+.footerGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: var(--font-body);
+}
+
+.footerGrid h4 {
+    color: #666;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.footerGrid p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 15vw;
+    }
+
+    .bigText {
+        font-size: 1.5rem;
+    }
+
+    .masonryGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .footerGrid {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+    }
+
+    .menuName {
+        font-size: 2rem;
+    }
+}

@@ -1,0 +1,822 @@
+/* ═══════════════════════════════════════════════════
+   TEMPLATE 5 — DIRECTOR'S CUT  •  CINEMATIC STYLESHEET
+   Aligned with "DIRECTOR CINEMA LEVEL (FINAL FORM)"
+   ═══════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+    --tm5-bg: #0a0a0a;
+    --tm5-surface: #121212;
+    --tm5-accent: #b89a68;
+    /* Desaturated Aged Brass */
+    --tm5-text: #f5f5f7;
+    --tm5-text-muted: rgba(245, 245, 247, 0.4);
+    --tm5-font-display: 'Playfair Display', serif;
+    --tm5-font-sans: 'Outfit', sans-serif;
+    --tm5-warm-glow: rgba(184, 154, 104, 0.08);
+    /* Much more subtle */
+    --tm5-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── WRAPPER ─────────────────────────────────────── */
+.wrapper {
+    background: var(--tm5-bg);
+    color: var(--tm5-text);
+    font-family: var(--tm5-font-sans);
+    width: 100%;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ─── GRAIN OVERLAY (Hack 03: Controlled Imperfection) */
+.grainOverlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.035;
+    /* Optimized: Fixed small pattern and less turbulence for better performance */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+    transform: translateZ(0);
+    /* Hardware accelerated */
+}
+
+/* ─── GRADIENT DEPTH (Hack 05: Layered Depth) ─────── */
+.gradientShift {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    /* Soft, non-radial feel for atmospheric depth */
+    background: linear-gradient(135deg, var(--tm5-warm-glow) 0%, transparent 100%);
+    opacity: 0.3;
+}
+
+/* ─── UTIL ────────────────────────────────────────── */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 5vw;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.sceneTag {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5em;
+    color: var(--tm5-accent);
+    display: block;
+    margin-bottom: 2rem;
+}
+
+.sectionTitle {
+    font-family: var(--tm5-font-display);
+    font-size: clamp(2.5rem, 5vw, 5.5rem);
+    line-height: 1.05;
+    margin: 0 0 2rem 0;
+    font-weight: 700;
+}
+
+.cinematicImageWrap {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #0d0d0d;
+    overflow: hidden;
+}
+
+/* Shimmer background while loading */
+.cinematicImageWrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(197, 163, 88, 0.05), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 1.8s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Premium Light Sweep (Glint) */
+.lightSweep {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.1) 45%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0.1) 55%,
+            transparent);
+    transform: translateX(-150%) skewX(-25deg);
+    transition: transform 0.8s var(--tm5-ease);
+    pointer-events: none;
+    z-index: 2;
+    will-change: transform;
+}
+
+.cinematicImageWrap:hover .lightSweep {
+    transform: translateX(150%) skewX(-25deg);
+}
+
+.imagePlaceholder {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #111;
+    overflow: hidden;
+}
+
+.imagePlaceholder::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 1.5s infinite;
+}
+
+.sectionDesc {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--tm5-text-muted);
+    max-width: 50ch;
+}
+
+/* ═══════════════════════════════════════════════════
+   SCENE 01 — OPENING SHOT (RE-ENGINEERED)
+   Expanding Frame Interaction
+   ═══════════════════════════════════════════════════ */
+.scene01 {
+    position: relative;
+    height: 180vh;
+    /* Scroll room for the scrub */
+    background: #000;
+}
+
+.heroSticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.heroMedia {
+    position: absolute;
+    width: 100%;
+    height: 140vh;
+    /* Match pattern for vertical overshoot */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #050505;
+    z-index: 1;
+    will-change: clip-path;
+}
+
+.heroImage {
+    min-width: 100%;
+    min-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.6) contrast(1.1);
+}
+
+.introContainer {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    margin-top: 15vh;
+    /* Adjusted for better visual balance with sticky */
+    z-index: 5;
+    width: 100%;
+}
+
+.introFocusWrap {
+    position: absolute;
+    width: 350px;
+    height: 475px;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+    will-change: height, transform;
+    background: #0d0d0d;
+    filter: brightness(0.7);
+}
+
+.introDetailImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+}
+
+.introOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.6));
+}
+
+.introText {
+    position: relative;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 60%;
+    text-align: center;
+}
+
+.introTitle {
+    font-family: var(--tm5-font-display);
+    font-size: 7.5vw;
+    /* Match pattern's 7vw for massive cinematic feel */
+    line-height: 0.85;
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+    white-space: nowrap;
+    text-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+}
+
+.introTag {
+    font-size: 0.75rem;
+    letter-spacing: 0.8em;
+    color: var(--tm5-accent);
+    font-weight: 500;
+}
+
+.introLocation {
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    color: var(--tm5-text-muted);
+    font-weight: 400;
+}
+
+/* Particles (Hack 03: Controlled Imperfection) */
+.particleContainer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    background: #fff;
+    border-radius: 50%;
+    filter: blur(0.5px);
+}
+
+.particle:nth-child(even) {
+    width: 2px;
+    height: 2px;
+    filter: blur(1.5px);
+    opacity: 0.15;
+}
+
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom,
+            rgba(10, 10, 10, 0.7) 0%,
+            transparent 30%,
+            transparent 70%,
+            rgba(10, 10, 10, 1) 100%);
+    z-index: 12;
+    pointer-events: none;
+}
+
+.heroMinimalUI {
+    position: absolute;
+    top: 5vh;
+    left: 5vw;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    opacity: 0.6;
+}
+
+.hudLine {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    border-left: 1px solid var(--tm5-accent);
+    padding-left: 0.8rem;
+}
+
+.hudLabel {
+    font-size: 0.5rem;
+    color: var(--tm5-accent);
+    letter-spacing: 0.3em;
+    font-weight: 600;
+}
+
+.hudValue {
+    font-size: 0.7rem;
+    color: #fff;
+    font-family: monospace;
+    letter-spacing: 0.15em;
+    opacity: 0.9;
+}
+
+.heroScrollIndicator {
+    position: absolute;
+    bottom: 3.5rem;
+    right: 4rem;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--tm5-text-muted);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    font-weight: 500;
+}
+
+.scrollDot {
+    width: 4px;
+    height: 4px;
+    background: var(--tm5-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--tm5-accent);
+}
+
+/* ═══════════════════════════════════════════════════
+   SCENE 02 — TRANSITION SPACE
+   ═══════════════════════════════════════════════════ */
+.scene02Space {
+    height: 30vh;
+}
+
+/* ═══════════════════════════════════════════════════
+   SCENE 03 — TRANSITION TO STORY
+   Vertical pull upward. Visual silence bridging hero → narrative.
+   ═══════════════════════════════════════════════════ */
+.scene03 {
+    height: 35vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+.scene03Inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.pullLine {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, var(--tm5-accent), transparent);
+    transform-origin: top center;
+}
+
+/* ═══════════════════════════════════════════════════
+   SCENE 04 — LEGACY FLASHBACK
+   Split narrative (left text, right visual).
+   ═══════════════════════════════════════════════════ */
+.scene04 {
+    padding: 10vh 0;
+    position: relative;
+    z-index: 2;
+}
+
+.legacyGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8vw;
+    align-items: center;
+}
+
+.legacyStory {
+    max-width: 42ch;
+}
+
+.legacyVisual {
+    position: relative;
+    aspect-ratio: 3/4;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.legacyImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ═══════════════════════════════════════════════════
+   SCENE 06 — FULL MENU (Category Tabs + Grid)
+   ═══════════════════════════════════════════════════ */
+.scene06Full {
+    padding: 12vh 0 8vh;
+    position: relative;
+    z-index: 2;
+}
+
+/* ── Category Tabs ── */
+.menuTabs {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-bottom: 4rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+}
+
+.menuTabs::-webkit-scrollbar {
+    display: none;
+}
+
+.menuTab {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--tm5-text-muted);
+    font-family: var(--tm5-font-sans);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    padding: 1rem 1.8rem;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.4s var(--tm5-ease);
+    white-space: nowrap;
+}
+
+.menuTab::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 1.8rem;
+    right: 1.8rem;
+    height: 2px;
+    background: var(--tm5-accent);
+    transform: scaleX(0);
+    transition: transform 0.4s var(--tm5-ease);
+}
+
+.menuTab:hover {
+    color: var(--tm5-text);
+}
+
+.menuTabActive {
+    color: var(--tm5-accent);
+}
+
+.menuTabActive::after {
+    transform: scaleX(1);
+}
+
+/* ── Menu Grid ── */
+.menuGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem 2rem;
+    /* Fix CLS by ensuring a minimum height that covers most categories */
+    min-height: 1000px;
+}
+
+.menuGridCard {
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--tm5-surface);
+    transition: transform 0.8s var(--tm5-ease), box-shadow 0.8s var(--tm5-ease);
+}
+
+.menuGridCard:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+}
+
+.menuGridMedia {
+    aspect-ratio: 16/10;
+    overflow: hidden;
+    background: #0d0d0d;
+}
+
+.menuGridInfo {
+    padding: 1.2rem 1.4rem 1.4rem;
+}
+
+.menuGridHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.menuGridName {
+    font-family: var(--tm5-font-display);
+    font-size: 1.05rem;
+    margin: 0;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--tm5-text);
+}
+
+.menuGridPrice {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    color: var(--tm5-accent);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    transition: all 0.4s var(--tm5-ease);
+    transform-origin: right center;
+}
+
+.menuGridCard:hover .menuGridPrice {
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.menuGridDesc {
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--tm5-text-muted);
+    margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════
+   SCENE 07 — SOCIAL ENERGY (Gallery)
+   Staggered entry. Social proof without noise.
+   ═══════════════════════════════════════════════════ */
+.scene07 {
+    padding: 10vh 0;
+    position: relative;
+    z-index: 2;
+    /* Removed content-visibility to eliminate layout shifts */
+    min-height: 130vh;
+}
+
+.galleryGrid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: 22vh;
+    gap: 1.5vw;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.galleryItem {
+    position: relative;
+    overflow: hidden;
+    border-radius: 3px;
+    background: #0d0d0d;
+    /* Force stability & isolation */
+    height: 100%;
+    width: 100%;
+    contain: layout paint;
+    transform: translateZ(0);
+    /* New layer */
+    will-change: transform;
+}
+
+.galleryItem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s var(--tm5-ease);
+}
+
+.galleryItem:hover img {
+    transform: scale(1.04);
+}
+
+.galleryItem:nth-child(1) {
+    grid-column: span 7;
+    grid-row: span 3;
+}
+
+.galleryItem:nth-child(2) {
+    grid-column: span 5;
+    grid-row: span 2;
+}
+
+.galleryItem:nth-child(3) {
+    grid-column: span 5;
+    grid-row: span 2;
+}
+
+.galleryItem:nth-child(4) {
+    grid-column: span 6;
+    grid-row: span 2;
+}
+
+.galleryItem:nth-child(5) {
+    grid-column: span 6;
+    grid-row: span 2;
+}
+
+/* ═══════════════════════════════════════════════════
+   SCENE 08 — SIGNATURE / STILLNESS
+   Locked shot. Minimal motion. Premium.
+   ═══════════════════════════════════════════════════ */
+.scene08 {
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.stillnessBg {
+    position: absolute;
+    font-family: var(--tm5-font-display);
+    font-size: clamp(5rem, 18vw, 22rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    user-select: none;
+    white-space: nowrap;
+    color: var(--tm5-text);
+}
+
+.signatureImageWrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.signatureImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(0.5) brightness(0.5);
+    will-change: transform, opacity;
+}
+
+/* ═══════════════════════════════════════════════════
+   SCENE 09 — DECISION FRAME (CTA)
+   CTA appears as destination, not interruption.
+   ═══════════════════════════════════════════════════ */
+.scene09 {
+    padding: 12vh 0;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.ctaButton {
+    display: inline-block;
+    padding: 1.5rem 4rem;
+    margin-top: 1rem;
+    border: 1px solid var(--tm5-accent);
+    color: var(--tm5-accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.5s var(--tm5-ease);
+}
+
+.ctaButton:hover {
+    background: var(--tm5-accent);
+    color: #000;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(197, 163, 88, 0.2);
+}
+
+/* ═══════════════════════════════════════════════════
+   SCENE 10 — END CREDITS (Footer)
+   Lighting warm. Motion minimal. Closure.
+   ═══════════════════════════════════════════════════ */
+.scene10 {
+    padding: 8vh 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    color: var(--tm5-text-muted);
+}
+
+.footerLogo {
+    font-family: var(--tm5-font-display);
+    font-size: 3.5rem;
+    color: #fff;
+    margin: 0;
+}
+
+.footerMeta {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+    .legacyGrid {
+        grid-template-columns: 1fr;
+        gap: 4vh;
+    }
+
+    .legacyVisual {
+        aspect-ratio: 16/9;
+    }
+
+    .menuGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .galleryGrid {
+        grid-auto-rows: 18vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .heroTitle {
+        font-size: clamp(3rem, 14vw, 7rem);
+    }
+
+    .menuGrid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+
+    .menuTabs {
+        margin-bottom: 2.5rem;
+    }
+
+    .menuTab {
+        padding: 0.8rem 1.2rem;
+        font-size: 0.7rem;
+    }
+
+    .footerContent {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .galleryGrid {
+        grid-template-columns: repeat(6, 1fr);
+        grid-auto-rows: 15vh;
+    }
+
+    .galleryItem:nth-child(1) {
+        grid-column: span 6;
+        grid-row: span 2;
+    }
+
+    .galleryItem:nth-child(2) {
+        grid-column: span 3;
+        grid-row: span 2;
+    }
+
+    .galleryItem:nth-child(3) {
+        grid-column: span 3;
+        grid-row: span 2;
+    }
+
+    .galleryItem:nth-child(4) {
+        grid-column: span 3;
+        grid-row: span 1;
+    }
+
+    .galleryItem:nth-child(5) {
+        grid-column: span 3;
+        grid-row: span 1;
+    }
+}

@@ -1,0 +1,20 @@
+/* Parallax Background Helper */
+.parallaxBg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    pointer-events: none;
+    opacity: 0.3;
+    /* Subtle */
+}
+
+.contentWrapper {
+    position: relative;
+    z-index: 1;
+}

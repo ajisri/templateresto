@@ -1,0 +1,151 @@
+.wrapper {
+    background: #000;
+    color: #fff;
+    font-family: var(--font-display);
+    overflow-x: hidden;
+    perspective: 2000px;
+}
+
+.intro {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.intro h1 {
+    font-size: 8rem;
+    line-height: 0.85;
+    margin: 0;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+}
+
+.hollow {
+    -webkit-text-stroke: 2px #fff;
+    /* Thicker stroke */
+    color: transparent;
+}
+
+.intro p {
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    letter-spacing: 0.5rem;
+    color: #888;
+    margin-top: 2rem;
+    font-weight: 700;
+}
+
+.gallery {
+    padding: 20vh 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30vh;
+    perspective: 1200px;
+}
+
+.perspectiveCard {
+    width: 60vw;
+    max-width: 800px;
+    height: 70vh;
+    position: relative;
+    transform-style: preserve-3d;
+}
+
+.cardContent {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    background: #111;
+    overflow: hidden;
+    box-shadow: 20px 20px 0 rgba(255, 255, 255, 0.05);
+}
+
+.cardImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.6) contrast(1.4) grayscale(0.5);
+    /* Heavier mood */
+    transition: filter 0.5s;
+}
+
+.perspectiveCard:hover .cardImage {
+    filter: brightness(1) contrast(1.1) grayscale(0);
+}
+
+.cardOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+    mix-blend-mode: normal;
+}
+
+.cardIndex {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.cardTitle {
+    font-size: 3.5rem;
+    margin: 0;
+    color: #fff;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.contact {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.button {
+    padding: 1.5rem 4rem;
+    border: 3px solid #fff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    background: transparent;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.button:hover {
+    background: #fff;
+    color: #000;
+    box-shadow: 10px 10px 0 rgba(255, 255, 255, 0.3);
+    transform: translate(-5px, -5px);
+}
+
+@media (max-width: 768px) {
+    .intro h1 {
+        font-size: 3rem;
+    }
+
+    .perspectiveCard {
+        width: 90vw;
+        height: 50vh;
+    }
+
+    .cardTitle {
+        font-size: 1.5rem;
+    }
+}

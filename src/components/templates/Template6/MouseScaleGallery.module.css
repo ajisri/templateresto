@@ -1,0 +1,24 @@
+.galleryContainer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    overflow: hidden;
+    /* Mask the image inside as it scales with container */
+}
+
+.galleryInner {
+    width: 100%;
+    height: 100%;
+    /* No scale here on inner, we scale container */
+}
+
+.galleryImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.1);
+    /* Slight Zoom for Parallax feel */
+}

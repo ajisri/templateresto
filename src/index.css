@@ -1,0 +1,75 @@
+:root {
+  --font-body: 'Inter', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+
+  /* Theme 1 - Neon Vortex */
+  --c-neon: #39ff14;
+  --c-black: #0a0a0a;
+  --c-white: #f0f0f0;
+
+  /* Theme 2 - Pop Art */
+  --c-pop-red: #ff2e63;
+  --c-pop-blue: #08d9d6;
+  --c-pop-yellow: #eaeaea;
+
+  /* Theme 3 - Brutal Grey */
+  --c-brutal-bg: #2d2d2d;
+  --c-brutal-acc: #ffeb3b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--c-black);
+  color: var(--c-white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+/* Custom Scrollbar for brutalism */
+::-webkit-scrollbar {
+  width: 8px;
+  background: var(--c-black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-neon);
+  border-radius: 0;
+}
+
+/* Lenis Scroll Smoothness */
+html.lenis {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
