@@ -1,58 +1,84 @@
-import { useRef, useLayoutEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import styles from './Template3.module.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Exploding Text Component for Brutalist Interaction
-const ExplodingTitle = ({ text, color }: { text: string, color: string }) => {
-    const container = useRef(null);
+// ─── UTILS: HUD SCENE TRACKER (Director's Cut Style) ─────
+const HUDSceneTracker = () => {
+    const [progress, setProgress] = useState(0);
+    const scenes = ["01", "02", "03", "04", "05", "06", "07"];
 
-    const onHover = () => {
-        if (!container.current) return;
-        const chars = (container.current as HTMLElement).querySelectorAll('.char');
-        gsap.to(chars, {
-            x: () => (Math.random() - 0.5) * 150,
-            y: () => (Math.random() - 0.5) * 150,
-            rotate: () => (Math.random() - 0.5) * 90,
-            opacity: 0,
-            scale: 0.5,
-            duration: 0.4,
-            ease: "power2.in",
-            stagger: { amount: 0.1, from: "random" }
-        });
-    };
-
-    const onLeave = () => {
-        if (!container.current) return;
-        const chars = (container.current as HTMLElement).querySelectorAll('.char');
-        gsap.to(chars, {
-            x: 0,
-            y: 0,
-            rotate: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 0.6,
-            ease: "elastic.out(1, 0.5)",
-            stagger: { amount: 0.1, from: "random" }
-        });
-    };
+    useEffect(() => {
+        const handleScroll = () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = winScroll / height;
+            setProgress(scrolled);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     return (
-        <h3
-            ref={container}
-            className={styles.menuName}
-            style={{ color, cursor: 'pointer' }}
-            onMouseEnter={onHover}
-            onMouseLeave={onLeave}
+        <div className={styles.sceneTracker}>
+            {scenes.map((s, i) => {
+                const start = i / scenes.length;
+                const end = (i + 1) / scenes.length;
+                const isActive = progress >= start && progress < end;
+                return (
+                    <div key={i} className={styles.trackerNode} style={{ opacity: isActive ? 1 : 0.2 }}>
+                        <div className={styles.trackerDot} style={{ height: isActive ? '24px' : '12px', background: isActive ? 'var(--t3-accent)' : '#fff' }} />
+                        <span className={styles.trackerLabel}>SCN_{s}</span>
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
+
+// Floating Image Follower for Menu
+const MenuImageFollower = ({ activeImage, activeName }: { activeImage: string | null, activeName: string | null }) => {
+    const mouseX = useRef(0);
+    const mouseY = useRef(0);
+    const followerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            mouseX.current = e.clientX;
+            mouseY.current = e.clientY;
+            if (followerRef.current) {
+                gsap.to(followerRef.current, {
+                    x: mouseX.current + 20,
+                    y: mouseY.current - 150,
+                    duration: 0.6,
+                    ease: "power3.out"
+                });
+            }
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
+    return (
+        <div
+            ref={followerRef}
+            className={styles.imageFollower}
+            style={{
+                opacity: activeImage ? 1 : 0,
+                pointerEvents: 'none',
+                position: 'fixed'
+            }}
         >
-            {text.split("").map((char, i) => (
-                <span key={i} className="char" style={{ display: 'inline-block' }}>
-                    {char === " " ? "\u00A0" : char}
-                </span>
-            ))}
-        </h3>
+            {activeImage && (
+                <div className={styles.followerInner}>
+                    <img src={activeImage} alt={activeName || ""} className={styles.followerImg} />
+                    <div className={styles.followerTag}>{activeName}</div>
+                </div>
+            )}
+        </div>
     );
 };
 
@@ -98,11 +124,11 @@ export default function Template3() {
 
             // Background Atmosphere Transitions
             const atmosphereZones = [
-                { trigger: `.${styles.hero}`, color: "#050505" },
-                { trigger: `.${styles.manifesto}`, color: "#0a0a0a" },
-                { trigger: `.${styles.horizontalSection}`, color: "#000000" },
-                { trigger: `.${styles.gallerySection}`, color: "#050505" },
-                { trigger: `.${styles.menuSection}`, color: "#111" }, // Warm dark neutral
+                { trigger: `.${styles.hero}`, color: "#0a0a0a" },
+                { trigger: `.${styles.manifesto}`, color: "#0c0b0a" },
+                { trigger: `.${styles.horizontalSection}`, color: "#0a0a0a" },
+                { trigger: `.${styles.gallerySection}`, color: "#0e0d0c" },
+                { trigger: `.${styles.menuSection}`, color: "#0a0a0a" },
             ];
 
             atmosphereZones.forEach((zone) => {
@@ -188,29 +214,34 @@ export default function Template3() {
     };
 
     const menuItems = [
-        { name: 'SIGNATURE BURGER', price: '$18', desc: 'Double Wagyu, Smoked Cheddar, Secret Sauce', color: '#fff' },
-        { name: 'LOCAL CRAFT BEER', price: '$12', desc: 'Seasonal selection from Semarang breweries', color: '#fff' },
-        { name: 'TRUFFLE FRIES', price: '$10', desc: 'Hand-cut, white truffle oil, parmesan', color: '#fff' },
-        { name: 'LOCAL COCKTAIL', price: '$15', desc: 'Arak-based signature blend', color: '#fff' },
-        { name: 'SMOKED BRISKET', price: '$22', desc: '12-hour low and slow, local wood smoke', color: '#fff' },
-        { name: 'GRILLED OCTOPUS', price: '$20', desc: 'Salsa verde, baby potatoes, burnt lemon', color: '#fff' }
+        { name: 'SIGNATURE BURGER', price: '$22', desc: '45-Day Dry Aged Beef, Smoked Bone Marrow Butter, Caramelized Roscoff Onions, Brioche.', img: '/images/template5/western-burger.jpg' },
+        { name: 'LOCAL CRAFT BEER', price: '$14', desc: 'Indonesian Small-Batch IPA from Semarang Micro-Breweries.', img: '/images/template5/drink-sharing.jpg' },
+        { name: 'TRUFFLE BONE MARROW', price: '$28', desc: 'Roasted Marrow, Périgord Truffles, Sourdough, Sea Salt.', img: '/images/template5/starter-platter.jpg' },
+        { name: 'SMOKED BRISKET', price: '$34', desc: '14-Hour Low & Slow using Local Coffee Wood Smoke.', img: '/images/template5/grill-ribs.jpg' },
+        { name: 'CHARRED OCTOPUS', price: '$26', desc: 'Persian Lime, Smoked Paprika, Confit Potato.', img: '/images/template5/grill-salmon.jpg' },
+        { name: 'AGED RIBEYE', price: '$85', desc: 'Black Angus MB5+, Grass-fed, Grilled over Binchotan.', img: '/images/template5/grill-steak.jpg' },
+        { name: 'WHISKEY SOUR', price: '$18', desc: 'Small-Batch Bourbon, Local Honey, Burnt Cinnamon.', img: '/images/template5/cocktail-1.jpg' }
     ];
+
+    const [activeMenu, setActiveMenu] = useState<{ img: string, name: string } | null>(null);
+
 
     // Generate 9 archive spots with SIGNIFICANT space to avoid "numpuk"
     const archiveSpots = [
-        { id: 1, left: '10%', top: '5vh', zIndex: 1, color: '#ff2e63' },
-        { id: 2, left: '55%', top: '15vh', zIndex: 0, color: '#08d9d6' },
-        { id: 3, left: '20%', top: '60vh', zIndex: 2, color: '#39ff14' },
-        { id: 4, left: '60%', top: '80vh', zIndex: 3, color: '#ffeb3b' },
-        { id: 5, left: '10%', top: '130vh', zIndex: 1, color: '#fff' },
-        { id: 6, left: '50%', top: '150vh', zIndex: 0, color: '#ff7b00' },
-        { id: 7, left: '25%', top: '200vh', zIndex: 2, color: '#00d4ff' },
-        { id: 8, left: '65%', top: '220vh', zIndex: 1, color: '#ff2e63' },
-        { id: 9, left: '15%', top: '270vh', zIndex: 3, color: '#08d9d6' },
+        { id: 1, left: '10%', top: '5vh', zIndex: 1, img: '/images/template5/gallery-1.jpg' },
+        { id: 2, left: '55%', top: '15vh', zIndex: 0, img: '/images/template5/gallery-2.jpg' },
+        { id: 3, left: '20%', top: '60vh', zIndex: 2, img: '/images/template5/gallery-3.jpg' },
+        { id: 4, left: '60%', top: '80vh', zIndex: 3, img: '/images/template5/gallery-4.jpg' },
+        { id: 5, left: '10%', top: '130vh', zIndex: 1, img: '/images/template5/gallery-5.jpg' },
+        { id: 6, left: '50%', top: '150vh', zIndex: 0, img: '/images/template5/hero-ambience.jpg' },
+        { id: 7, left: '25%', top: '200vh', zIndex: 2, img: '/images/template5/legacy.jpg' },
+        { id: 8, left: '65%', top: '220vh', zIndex: 1, img: '/images/template5/signature.jpg' },
+        { id: 9, left: '15%', top: '270vh', zIndex: 3, img: '/images/template5/hero-bg.jpg' },
     ];
 
     return (
         <div ref={component} className={styles.container}>
+            <HUDSceneTracker />
             <div
                 className="parallax-bg-fixed"
                 style={{
@@ -313,43 +344,44 @@ export default function Template3() {
                                 zIndex: spot.zIndex
                             }}
                         >
-                            <div className={styles.aspectRatio}>
+                            <div className={styles.mImgWrap}>
                                 <div
-                                    className={styles.mnImg}
+                                    className={styles.mImg}
                                     style={{
-                                        background: spot.color,
-                                        backgroundImage: `linear-gradient(45deg, ${spot.color}, #000)`
+                                        backgroundImage: `url(${spot.img})`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center'
                                     }}
                                 ></div>
                             </div>
-                            <div className={styles.caption}>RECORD_{spot.id}</div>
                         </div>
                     ))}
                 </div>
             </section>
 
-            {/* INTERACTIVE MENU POSTERS */}
+            {/* INTERACTIVE MENU LIST */}
             <section className={styles.menuSection} style={{ background: 'transparent' }}>
                 <div className={styles.galleryHeader}>
-                    <h2 className="text-reveal">THE MENU</h2>
-                    <p className="text-reveal">ATMOSPHERIC SELECTION</p>
+                    <h2 className="text-reveal">THE SELECTION</h2>
+                    <p className="text-reveal">CURATED // ATMOSPHERIC</p>
                 </div>
-                <div className={styles.menuPostersGrid}>
+                <div className={styles.menuList}>
                     {menuItems.map((item, i) => (
-                        <div key={i} className={styles.menuPoster} style={{ borderColor: item.color }}>
-                            <div className={styles.posterGlow}></div>
-                            <div className={styles.posterHeader}>
-                                <span className={styles.menuIndex}>0{i + 1}</span>
-                                <span className={styles.menuPrice}>{item.price}</span>
+                        <motion.div
+                            key={i}
+                            className={styles.menuItemRow}
+                            onMouseEnter={() => setActiveMenu({ img: item.img, name: item.name })}
+                            onMouseLeave={() => setActiveMenu(null)}
+                        >
+                            <div className={styles.itemMeta}>0{i + 1} // {item.price}</div>
+                            <div className={styles.itemNameWrap}>
+                                <h3 className={styles.itemName}>{item.name}</h3>
+                                <p className={styles.itemDesc}>{item.desc}</p>
                             </div>
-                            <ExplodingTitle text={item.name} color={item.color} />
-                            <p className={styles.menuDesc}>{item.desc}</p>
-                            <div className={styles.posterFooter}>
-                                <span>LOCAL TAVERN // SEMARANG</span>
-                            </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
+                <MenuImageFollower activeImage={activeMenu?.img || null} activeName={activeMenu?.name || null} />
             </section>
 
             <footer className={styles.footer} style={{ background: 'transparent' }}>

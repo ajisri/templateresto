@@ -1,8 +1,46 @@
+import { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 import styles from './Template4.module.css';
 import StickyScroll from './StickyScroll';
 import TextMask from './TextMask';
+
+// ─── UTILS: GRAIN & DEPTH HACKS ─────────────────────────
+const GrainOverlay = () => <div className={styles.grainOverlay} />;
+const AmbienceShift = () => <div className={styles.gradientShift} />;
+
+// ─── UTILS: HUD SCENE TRACKER ────────────────────────────────
+const HUDSceneTracker = () => {
+    const [progress, setProgress] = useState(0);
+    const scenes = ["01", "02", "03", "04", "05"];
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = winScroll / height;
+            setProgress(scrolled);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    return (
+        <div className={styles.sceneTracker}>
+            {scenes.map((s, i) => {
+                const start = i / scenes.length;
+                const end = (i + 1) / scenes.length;
+                const isActive = progress >= start && progress < end;
+                return (
+                    <div key={i} className={styles.trackerNode} style={{ opacity: isActive ? 1 : 0.2 }}>
+                        <span className={styles.trackerLabel}>SCN_{s}</span>
+                        <div className={styles.trackerDot} style={{ width: isActive ? '12px' : '6px', background: isActive ? 'var(--t4-accent)' : '#fff' }} />
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
 
 const MenuItem = ({ name, price, desc, img, delay }: { name: string, price: string, desc: string, img: string, delay: number }) => (
     <motion.div
@@ -28,21 +66,24 @@ export default function Template4() {
     const y1 = useTransform(scrollY, [0, 500], [0, 200]);
 
     const starters = [
-        { name: "Smoked Bone Marrow", price: "185K", desc: "Roasted garlic, parsley salad, grilled sourdough.", img: "https://images.unsplash.com/photo-1544025162-d76690b6d029?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
-        { name: "Wagyu Beef Tartare", price: "210K", desc: "Hand-cut beef, cured egg yolk, capers, truffle oil.", img: "https://images.unsplash.com/photo-1626804475297-411dbcc76bc2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+        { name: "Smoked Bone Marrow", price: "185K", desc: "Roasted garlic, parsley salad, grilled sourdough.", img: "/images/template5/starter-platter.jpg" },
+        { name: "Wagyu Beef Tartare", price: "210K", desc: "Hand-cut beef, cured egg yolk, capers, truffle oil.", img: "/images/template5/grill-wagyu.jpg" },
     ];
 
     const mains = [
-        { name: "Dry Aged Ribeye", price: "850K", desc: "45 days dry-aged, truffle mash, bordelaise sauce.", img: "https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
-        { name: "Pan Seared Scallops", price: "320K", desc: "Cauliflower purée, crispy pancetta, sage butter.", img: "https://images.unsplash.com/photo-1599084993091-1e0b0117c372?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
-        { name: "Lamb Shank", price: "450K", desc: "Slow-braised (12h), polenta, roasted root vegetables.", img: "https://images.unsplash.com/photo-1574969903848-18e470877a5d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
-        { name: "Truffle Risotto", price: "290K", desc: "Arborio rice, wild mushrooms, fresh black truffle, parmesan.", img: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+        { name: "Dry Aged Ribeye", price: "850K", desc: "45 days dry-aged, truffle mash, bordelaise sauce.", img: "/images/template5/grill-steak.jpg" },
+        { name: "Pan Seared Scallops", price: "320K", desc: "Cauliflower purée, crispy pancetta, sage butter.", img: "/images/template5/grill-salmon.jpg" },
+        { name: "Lamb Shank", price: "450K", desc: "Slow-braised (12h), polenta, roasted root vegetables.", img: "/images/template5/grill-ribs.jpg" },
+        { name: "Truffle Risotto", price: "290K", desc: "Arborio rice, wild mushrooms, fresh black truffle, parmesan.", img: "/images/template5/pasta-aglio.jpg" }
     ];
 
     const bgY = useTransform(scrollY, [0, 2000], [0, 300]);
 
     return (
         <div className={styles.wrapper}>
+            <GrainOverlay />
+            <AmbienceShift />
+            <HUDSceneTracker />
             <motion.div
                 style={{
                     position: 'fixed',
@@ -58,6 +99,16 @@ export default function Template4() {
             />
             <div style={{ position: 'relative', zIndex: 1 }}>
                 <section className={styles.hero}>
+                    <div className={styles.heroMinimalUI}>
+                        <div className={styles.hudLine}>
+                            <span className={styles.hudLabel}>CAM_04 // INDUSTRIAL</span>
+                            <span className={styles.hudValue}>REC_LOCKED</span>
+                        </div>
+                        <div className={styles.hudLine}>
+                            <span className={styles.hudLabel}>ATMOS</span>
+                            <span className={styles.hudValue}>AGED_BRASS // DEEP</span>
+                        </div>
+                    </div>
                     <motion.div style={{ y: y1 }} className={styles.heroContent}>
                         <motion.h1
                             className={styles.heroTitle}
@@ -98,10 +149,30 @@ export default function Template4() {
                     </div>
                 </section>
 
+                <div className={styles.sceneSpacer} />
+
                 <TextMask />
 
+
                 <footer className={styles.footer}>
-                    <p style={{ letterSpacing: '0.2em', color: '#555' }}>TAVERN GROUP • RESERVATIONS OPEN</p>
+                    <div className={styles.footerGrid}>
+                        <div className={styles.fBlock}>
+                            <h4>LOCATION</h4>
+                            <p>JL. GASTRO NOMIC 24<br />SEMARANG, ID</p>
+                        </div>
+                        <div className={styles.fBlock}>
+                            <h4>CONTACT</h4>
+                            <p>+62 811 2233 4455<br />HELLO@TAVERN.CO</p>
+                        </div>
+                        <div className={styles.fBlock}>
+                            <h4>HOURS</h4>
+                            <p>11:00 AM — 02:00 AM<br />MON — SUN</p>
+                        </div>
+                    </div>
+                    <div className={styles.footerBottom}>
+                        <span>LOCAL TAVERN // PROTOCOL 04</span>
+                        <span>© 2024 DESIGNED BY DIRECTOR</span>
+                    </div>
                 </footer>
             </div>
         </div>

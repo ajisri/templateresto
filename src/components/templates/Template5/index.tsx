@@ -54,6 +54,29 @@ const ParticleField = () => {
     );
 };
 
+// ─── UTILS: HUD SCENE TRACKER ────────────────────────────────
+const HUDSceneTracker = ({ progress }: { progress: any }) => {
+    const scenes = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"];
+    return (
+        <div className={styles.sceneTracker}>
+            {scenes.map((s, i) => {
+                const start = i / scenes.length;
+                const end = (i + 1) / scenes.length;
+                const mid1 = start + (end - start) * 0.2;
+                const mid2 = start + (end - start) * 0.8;
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                const opacity = useTransform(progress, [start, mid1, mid2, end], [0.2, 1, 1, 0.2]);
+                return (
+                    <motion.div key={i} className={styles.trackerNode} style={{ opacity }}>
+                        <span className={styles.trackerLabel}>SCN_{s}</span>
+                        <div className={styles.trackerDot} />
+                    </motion.div>
+                );
+            })}
+        </div>
+    );
+};
+
 const CinematicImage = ({ src, alt, className }: { src: string; alt: string; className?: string }) => {
     return (
         <div className={`${styles.cinematicImageWrap} ${className || ""}`}>
@@ -263,7 +286,38 @@ const Scene04_Legacy = () => {
     );
 };
 
-// ─── SCENE 06 — MENU CLOSEUPS ─────────────────────────────────────
+// ─── SCENE 05 — GOLDEN HOUR SHIFT ───────────────────────────────
+// Camera: Exposure slowly drops. Warm tones increase. 
+// "Perubahan harus nyaris tidak terasa."
+const Scene05_GoldenHour = () => {
+    return (
+        <section className={styles.scene05}>
+            <motion.div
+                className={styles.lightBeam}
+                animate={{
+                    opacity: [0.1, 0.3, 0.1],
+                    x: ["-55%", "-45%", "-55%"]
+                }}
+                transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <div className={styles.tableSurface} />
+            <div className={styles.container}>
+                <motion.div
+                    className={styles.goldenContent}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 3 }}
+                >
+                    <span className={styles.sceneTag}>PHASE 05 // LIGHT EVOLUTION</span>
+                    <h2 className={styles.sectionTitle}>Where Light<br />Meets the Table.</h2>
+                    <p className={styles.sectionDesc} style={{ margin: '0 auto' }}>
+                        The golden hour at Semarang's most iconic corner. A moment of silence before the evening rush—where every table tells a generational story.
+                    </p>
+                </motion.div>
+            </div>
+        </section>
+    );
+};
 // Camera: Macro / detail. Slow lateral movement. User controls pace (hover).
 
 const MENU_DATA: Record<string, { name: string; price: string; desc: string; img: string }[]> = {
@@ -560,12 +614,14 @@ export default function Template5() {
         <motion.div ref={mainRef} className={styles.wrapper} style={{ backgroundColor: bgColor }}>
             <GrainOverlay />
             <AmbienceShift />
+            <HUDSceneTracker progress={scrollYProgress} />
 
             <Scene01_Opening />
             <Scene02_TitleReveal />
             <Scene03_Transition />
+            <div className={styles.sceneSpacer} />
             <Scene04_Legacy />
-            {/* SCENE 05 = bgColor transition, no physical section */}
+            <Scene05_GoldenHour />
             <Scene06_Menu />
             <Scene07_Gallery />
             <Scene08_Signature />

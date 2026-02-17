@@ -54,6 +54,47 @@
 }
 
 /* ─── UTIL ────────────────────────────────────────── */
+.sceneTracker {
+    position: fixed;
+    right: 3vw;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    pointer-events: none;
+}
+
+.trackerNode {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.trackerLabel {
+    font-size: 0.5rem;
+    font-family: monospace;
+    letter-spacing: 0.2em;
+    color: var(--tm5-accent);
+    opacity: 0.5;
+}
+
+.trackerDot {
+    width: 4px;
+    height: 4px;
+    background: var(--tm5-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--tm5-accent);
+}
+
+.sceneSpacer {
+    height: 40vh;
+    /* Deliberate visual silence */
+    width: 100%;
+}
+
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -155,6 +196,8 @@
 .scene01 {
     position: relative;
     height: 100vh;
+    height: 100dvh;
+    /* Better for mobile */
     overflow: hidden;
 }
 
@@ -249,8 +292,8 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    opacity: 0.6;
-    /* Reduced prominence */
+    opacity: 0.4;
+    /* Ultra-minimal, authoritative */
 }
 
 .hudLine {
@@ -258,35 +301,35 @@
     flex-direction: column;
     gap: 0.3rem;
     border-left: 1px solid var(--tm5-accent);
-    padding-left: 0.8rem;
+    padding-left: 1rem;
 }
 
 .hudLabel {
     font-size: 0.5rem;
     color: var(--tm5-accent);
-    letter-spacing: 0.3em;
-    font-weight: 600;
+    letter-spacing: 0.4em;
+    font-weight: 700;
 }
 
 .hudValue {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: #fff;
     font-family: monospace;
-    letter-spacing: 0.15em;
-    opacity: 0.9;
+    letter-spacing: 0.2em;
+    opacity: 1;
 }
 
 .heroScrollIndicator {
     position: absolute;
-    bottom: 3.5rem;
-    right: 4rem;
+    bottom: 5vh;
+    right: 5vw;
     z-index: 10;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
     color: var(--tm5-text-muted);
-    font-size: 0.65rem;
-    letter-spacing: 0.3em;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
     font-weight: 500;
 }
 
@@ -311,7 +354,8 @@
    Rule: Silence = power.
    ═══════════════════════════════════════════════════ */
 .scene02 {
-    height: 100vh;
+    height: 120vh;
+    /* Extra height for slower pacing */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -362,12 +406,15 @@
    Vertical pull upward. Visual silence bridging hero → narrative.
    ═══════════════════════════════════════════════════ */
 .scene03 {
-    height: 35vh;
+    height: 80vh;
+    /* Much longer transition to feel the 'Entry' */
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     z-index: 2;
+    margin-bottom: 20vh;
+    /* Psychological spacing before Genesis */
 }
 
 .scene03Inner {
@@ -389,7 +436,8 @@
    Split narrative (left text, right visual).
    ═══════════════════════════════════════════════════ */
 .scene04 {
-    padding: 10vh 0;
+    padding: 25vh 0;
+    /* Massive breathing room */
     position: relative;
     z-index: 2;
 }
@@ -417,6 +465,44 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.scene05 {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: linear-gradient(to bottom, #0a0a0a, #0e0d0c, #0a0a0a);
+    overflow: hidden;
+}
+
+.goldenContent {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.lightBeam {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 200%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(184, 154, 104, 0.15) 0%, transparent 70%);
+    transform: translateX(-50%) rotate(45deg);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.tableSurface {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40vh;
+    background: linear-gradient(to top, rgba(184, 154, 104, 0.05) 0%, transparent 100%);
+    border-top: 1px solid rgba(184, 154, 104, 0.1);
 }
 
 /* ═══════════════════════════════════════════════════

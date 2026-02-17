@@ -9,8 +9,8 @@ export default function StickyScroll() {
         offset: ["start start", "end end"]
     });
 
-    const scale = useTransform(scrollYProgress, [0, 1], [1, 5]);
-    const opacity = useTransform(scrollYProgress, [0, 0.8, 1], [1, 1, 0]);
+    const scale = useTransform(scrollYProgress, [0, 1], [1, 2.5]);
+    const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.6, 1, 1, 0.8]);
 
     return (
         <div ref={containerRef} className={styles.stickyContainer}>
@@ -20,12 +20,12 @@ export default function StickyScroll() {
                     className={styles.stickyImageContainer}
                 >
                     <img
-                        src="https://images.unsplash.com/photo-1544256718-3bcf237f3974?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
-                        alt="Zooming Industrial"
+                        src="/images/template5/hero-ambience.jpg"
+                        alt="The Kitchen"
                         className={styles.stickyImage}
                     />
                     <div className={styles.stickyOverlay}>
-                        <h2>THE DEPTH OF FLAVOR</h2>
+                        <h2 className={styles.stickyTitle}>THE DEPTH OF FLAVOR</h2>
                     </div>
                 </motion.div>
             </div>

@@ -1,9 +1,58 @@
+import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { useRef } from 'react';
 import styles from './Template1.module.css';
 import PixelImage from './PixelImage';
 
-const Card = ({ index, color }: { index: number, color: string }) => {
+const GrainOverlay = () => <div className={styles.grainOverlay} />;
+const AmbienceShift = () => <div className={styles.gradientShift} />;
+
+// ─── UTILS: HUD SCENE TRACKER ────────────────────────────────
+const HUDSceneTracker = () => {
+    const [progress, setProgress] = useState(0);
+    const scenes = ["01", "02", "03", "04", "05"];
+
+    const scrollToPhase = (index: number) => {
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        window.scrollTo({
+            top: (index / (scenes.length - 1)) * height,
+            behavior: 'smooth'
+        });
+    };
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = winScroll / height;
+            setProgress(scrolled);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    return (
+        <div className={styles.sceneTracker}>
+            {scenes.map((s, i) => {
+                const start = (i / scenes.length) - 0.05;
+                const end = ((i + 1) / scenes.length) + 0.05;
+                const isActive = progress >= start && progress < end;
+                return (
+                    <div
+                        key={i}
+                        className={styles.trackerNode}
+                        style={{ opacity: isActive ? 1 : 0.2 }}
+                        onClick={() => scrollToPhase(i)}
+                    >
+                        <div className={styles.trackerDot} style={{ height: isActive ? '24px' : '12px', background: isActive ? 'var(--t1-accent)' : '#fff', opacity: isActive ? 1 : 0.3 }} />
+                        <span className={styles.trackerLabel}>PHASE_{s}</span>
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
+
+const Card = ({ index }: { index: number }) => {
     const cardRef = useRef(null);
     const { scrollYProgress } = useScroll({
         target: cardRef,
@@ -15,6 +64,24 @@ const Card = ({ index, color }: { index: number, color: string }) => {
     const z = useTransform(scrollYProgress, [0, 0.5, 1], [-200, 0, -200]);
     const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
     const springRotateX = useSpring(rotateX, { stiffness: 100, damping: 30 });
+
+    const cardImages = [
+        "/images/template5/gallery-1.jpg",
+        "/images/template5/gallery-2.jpg",
+        "/images/template5/gallery-3.jpg",
+        "/images/template5/gallery-4.jpg",
+        "/images/template5/gallery-5.jpg",
+        "/images/template5/legacy.jpg",
+    ];
+
+    const cardTitles = [
+        "LEGACY_FOUNDATION",
+        "MODERN_COMFORT",
+        "COMMUNITY_SPACE",
+        "CRAFT_CULTURE",
+        "FLAVOR_BEYOND",
+        "THE_EVOLUTION"
+    ];
 
     return (
         <motion.div
@@ -29,13 +96,13 @@ const Card = ({ index, color }: { index: number, color: string }) => {
         >
             <div className={styles.cardContent}>
                 <PixelImage
-                    src={`https://picsum.photos/seed/${index + 40}/800/1000`}
+                    src={cardImages[(index - 1) % cardImages.length]}
                     alt={`Gallery ${index}`}
                     className={styles.cardImage}
                 />
-                <div className={styles.cardOverlay} style={{ background: color }}>
-                    <span className={styles.cardIndex}>PHASE_{index < 10 ? `0${index}` : index}</span>
-                    <h3 className={styles.cardTitle}>CONCEPT {index}</h3>
+                <div className={styles.cardOverlay}>
+                    <span className={styles.cardIndex}>PHASE_LOCKED // 0{index}</span>
+                    <h3 className={styles.cardTitle}>{cardTitles[(index - 1) % cardTitles.length]}</h3>
                 </div>
             </div>
         </motion.div>
@@ -44,13 +111,16 @@ const Card = ({ index, color }: { index: number, color: string }) => {
 
 export default function Template1() {
     const containerRef = useRef(null);
-    const colors = ['#39ff14', '#ff2e63', '#08d9d6', '#ffeb3b', '#ffffff', '#ff7b00'];
 
     const { scrollY } = useScroll();
     const bgY = useTransform(scrollY, [0, 2000], [0, 400]);
 
     return (
         <div ref={containerRef} className={styles.wrapper}>
+            <GrainOverlay />
+            <AmbienceShift />
+            <HUDSceneTracker />
+
             <motion.div
                 style={{
                     position: 'fixed',
@@ -59,34 +129,45 @@ export default function Template1() {
                     width: '100%',
                     height: 'calc(100% + 400px)',
                     zIndex: 0,
-                    backgroundImage: 'url(https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80)',
+                    backgroundImage: 'url(/images/template5/hero-bg.jpg)',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    opacity: 0.2,
-                    y: bgY
+                    opacity: 0.1,
+                    y: bgY,
+                    filter: 'grayscale(100%) brightness(0.5)'
                 }}
             />
             <div style={{ position: 'relative', zIndex: 1 }}>
-                <section className={styles.intro}>
+                <section className={styles.hero}>
+                    <div className={styles.heroMinimalUI}>
+                        <div className={styles.hudLine}>
+                            <span className={styles.hudLabel}>CAM_01 // PERSPECTIVE</span>
+                            <span className={styles.hudValue}>DEPTH_3D_ENABLED</span>
+                        </div>
+                        <div className={styles.hudLine}>
+                            <span className={styles.hudLabel}>LIGHT_MODE</span>
+                            <span className={styles.hudValue}>CARBON_VOID // BRASS</span>
+                        </div>
+                    </div>
                     <motion.h1
                         initial={{ opacity: 0, y: 100 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1 }}
                     >
-                        PERSPECTIVE <br /> <span className={styles.hollow}>REDEFINED</span>
+                        THE TAVERN <br /> <span className={styles.hollow}>REIMAGINED</span>
                     </motion.h1>
-                    <p>SCROLL TO ROTATE REALITY</p>
+                    <p>LEGACY MEETS MODERNITY</p>
                 </section>
 
                 <div className={styles.gallery}>
-                    {Array.from({ length: 12 }).map((_, i) => (
-                        <Card key={i} index={i + 1} color={colors[i % colors.length]} />
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <Card key={i} index={i + 1} />
                     ))}
                 </div>
 
                 <section className={styles.contact}>
-                    <h2>RESERVE YOUR SPACE</h2>
-                    <div className={styles.button}>GO BEYOND</div>
+                    <h2>EXPERIENCE THE NEW LOCAL</h2>
+                    <div className={styles.button}>SECURE ACCESS</div>
                 </section>
             </div>
         </div>

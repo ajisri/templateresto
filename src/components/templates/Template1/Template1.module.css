@@ -1,8 +1,11 @@
 .wrapper {
-    background: #000;
-    color: #fff;
-    font-family: var(--font-display);
+    background: #0a0a0a;
+    color: #f5f5f7;
+    min-height: 200vh;
+    font-family: var(--tm5-font-sans);
+    position: relative;
     overflow-x: hidden;
+    --t1-accent: #b89a68;
     perspective: 2000px;
 }
 
@@ -13,30 +16,30 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    position: relative;
 }
 
 .intro h1 {
-    font-size: 8rem;
-    line-height: 0.85;
+    font-family: var(--tm5-font-display);
+    font-size: clamp(3rem, 10vw, 9rem);
+    line-height: 0.9;
+    font-weight: 700;
     margin: 0;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: -0.05em;
+    letter-spacing: -0.03em;
 }
 
 .hollow {
-    -webkit-text-stroke: 2px #fff;
-    /* Thicker stroke */
+    -webkit-text-stroke: 1px var(--t1-accent);
     color: transparent;
 }
 
 .intro p {
-    font-family: var(--font-body);
-    font-size: 1.2rem;
-    letter-spacing: 0.5rem;
-    color: #888;
-    margin-top: 2rem;
-    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5em;
+    color: var(--t1-accent);
+    margin-top: 3rem;
+    opacity: 0.8;
 }
 
 .gallery {
@@ -49,21 +52,23 @@
 }
 
 .perspectiveCard {
-    width: 60vw;
-    max-width: 800px;
-    height: 70vh;
+    width: 100%;
+    max-width: 600px;
+    margin: 15vh auto;
     position: relative;
     transform-style: preserve-3d;
+    perspective: 1200px;
+    z-index: 2;
 }
 
 .cardContent {
-    width: 100%;
-    height: 100%;
     position: relative;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    background: #111;
+    aspect-ratio: 4/5;
+    border: 1px solid rgba(184, 154, 104, 0.15);
+    background: #121212;
     overflow: hidden;
-    box-shadow: 20px 20px 0 rgba(255, 255, 255, 0.05);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+    transform-style: preserve-3d;
 }
 
 .cardImage {
@@ -81,31 +86,29 @@
 
 .cardOverlay {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 3rem;
+    inset: 0;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+    padding: 3rem;
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.9) 0%, transparent 60%);
     mix-blend-mode: normal;
 }
 
 .cardIndex {
-    font-family: var(--font-body);
-    font-size: 1rem;
-    color: #fff;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
+    font-size: 0.65rem;
+    font-family: monospace;
+    letter-spacing: 0.3em;
+    color: var(--t1-accent);
 }
 
 .cardTitle {
-    font-size: 3.5rem;
-    margin: 0;
+    font-family: var(--tm5-font-display);
+    font-size: 2.5rem;
+    margin: 0.5rem 0 0;
+    font-weight: 700;
     color: #fff;
-    font-weight: 900;
-    text-transform: uppercase;
+    letter-spacing: -0.02em;
 }
 
 .contact {
@@ -148,4 +151,77 @@
     .cardTitle {
         font-size: 1.5rem;
     }
+}
+
+/* HUD Tracker for Template 1 */
+.sceneTracker {
+    position: fixed;
+    left: 2vw;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    pointer-events: auto;
+    /* Enable clicking */
+}
+
+.trackerNode {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.trackerLabel {
+    font-size: 0.5rem;
+    font-family: monospace;
+    letter-spacing: 0.2em;
+    color: var(--t1-accent);
+}
+
+.trackerDot {
+    width: 2px;
+    height: 12px;
+    background: #fff;
+    opacity: 0.3;
+    transition: all 0.4s var(--tm5-ease);
+}
+
+.heroMinimalUI {
+    position: absolute;
+    top: 5vh;
+    left: 5vw;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    opacity: 0.5;
+}
+
+.hudLine {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    border-left: 1px solid var(--t1-accent);
+    padding-left: 1rem;
+}
+
+.hudLabel {
+    font-size: 0.5rem;
+    color: var(--t1-accent);
+    letter-spacing: 0.4em;
+    font-weight: 700;
+}
+
+.hudValue {
+    font-size: 0.65rem;
+    color: #fff;
+    font-family: monospace;
+}
+
+.sceneSpacer {
+    height: 30vh;
 }
