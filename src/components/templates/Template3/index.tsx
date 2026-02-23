@@ -7,20 +7,15 @@ import styles from './Template3.module.css';
 gsap.registerPlugin(ScrollTrigger);
 
 // ─── UTILS: HUD SCENE TRACKER (Director's Cut Style) ─────
-const HUDSceneTracker = () => {
+const HUDSceneTracker = ({ scrollYProgress }: { scrollYProgress: any }) => {
     const [progress, setProgress] = useState(0);
     const scenes = ["01", "02", "03", "04", "05", "06", "07"];
 
     useEffect(() => {
-        const handleScroll = () => {
-            const winScroll = document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = winScroll / height;
-            setProgress(scrolled);
-        };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+        return scrollYProgress.on("change", (latest: number) => {
+            setProgress(latest);
+        });
+    }, [scrollYProgress]);
 
     return (
         <div className={styles.sceneTracker}>
@@ -51,10 +46,10 @@ const MenuImageFollower = ({ activeImage, activeName }: { activeImage: string | 
             mouseY.current = e.clientY;
             if (followerRef.current) {
                 gsap.to(followerRef.current, {
-                    x: mouseX.current + 20,
-                    y: mouseY.current - 150,
-                    duration: 0.6,
-                    ease: "power3.out"
+                    x: mouseX.current + 40,
+                    y: mouseY.current - 180,
+                    duration: 0.8,
+                    ease: "power2.out"
                 });
             }
         };
@@ -63,28 +58,41 @@ const MenuImageFollower = ({ activeImage, activeName }: { activeImage: string | 
     }, []);
 
     return (
-        <div
+        <motion.div
             ref={followerRef}
             className={styles.imageFollower}
-            style={{
+            initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+            animate={{
                 opacity: activeImage ? 1 : 0,
+                scale: activeImage ? 1 : 0.8,
+                rotate: activeImage ? 3 : -5
+            }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+            style={{
                 pointerEvents: 'none',
-                position: 'fixed'
+                position: 'fixed',
+                zIndex: 1000
             }}
         >
             {activeImage && (
                 <div className={styles.followerInner}>
                     <img src={activeImage} alt={activeName || ""} className={styles.followerImg} />
-                    <div className={styles.followerTag}>{activeName}</div>
+                    <div className={styles.followerTag}>
+                        <span className={styles.tagLabel}>PREVIEW</span>
+                        <h4 className={styles.tagName}>{activeName}</h4>
+                    </div>
                 </div>
             )}
-        </div>
+        </motion.div>
     );
 };
+
+import { useScroll } from 'framer-motion';
 
 export default function Template3() {
     const component = useRef<HTMLDivElement>(null);
     const sliderRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll();
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
@@ -144,15 +152,15 @@ export default function Template3() {
             // Image Parallax Passing Effect
             const archiveItems = gsap.utils.toArray('.parallax-item');
             archiveItems.forEach((item: any, i) => {
-                // Large varied ranges to create passing effect
-                const range = 400 + (i % 3) * 300 + Math.random() * 200;
+                // Controlled subtle parallax so grid remains intact
+                const speed = 100 + (i % 3) * 50;
                 gsap.fromTo(item,
-                    { y: range },
+                    { y: speed },
                     {
-                        y: -range,
+                        y: -speed,
                         ease: "none",
                         scrollTrigger: {
-                            trigger: `.${styles.gallerySection}`,
+                            trigger: item,
                             start: "top bottom",
                             end: "bottom top",
                             scrub: true
@@ -199,6 +207,11 @@ export default function Template3() {
                 }
             });
 
+            // Refresh ScrollTrigger to ensure proper heights are read after rendering
+            setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 500);
+
         }, component);
 
         return () => ctx.revert();
@@ -226,22 +239,22 @@ export default function Template3() {
     const [activeMenu, setActiveMenu] = useState<{ img: string, name: string } | null>(null);
 
 
-    // Generate 9 archive spots with SIGNIFICANT space to avoid "numpuk"
+    // Strict 12-Column Grid Implementation based on Space & Layout guidelines
     const archiveSpots = [
-        { id: 1, left: '10%', top: '5vh', zIndex: 1, img: '/images/template5/gallery-1.jpg' },
-        { id: 2, left: '55%', top: '15vh', zIndex: 0, img: '/images/template5/gallery-2.jpg' },
-        { id: 3, left: '20%', top: '60vh', zIndex: 2, img: '/images/template5/gallery-3.jpg' },
-        { id: 4, left: '60%', top: '80vh', zIndex: 3, img: '/images/template5/gallery-4.jpg' },
-        { id: 5, left: '10%', top: '130vh', zIndex: 1, img: '/images/template5/gallery-5.jpg' },
-        { id: 6, left: '50%', top: '150vh', zIndex: 0, img: '/images/template5/hero-ambience.jpg' },
-        { id: 7, left: '25%', top: '200vh', zIndex: 2, img: '/images/template5/legacy.jpg' },
-        { id: 8, left: '65%', top: '220vh', zIndex: 1, img: '/images/template5/signature.jpg' },
-        { id: 9, left: '15%', top: '270vh', zIndex: 3, img: '/images/template5/hero-bg.jpg' },
+        { id: 1, span: 5, start: 1, mt: 0, img: '/images/template5/gallery-1.jpg' },
+        { id: 2, span: 4, start: 8, mt: 100, img: '/images/template5/gallery-2.jpg' },
+        { id: 3, span: 6, start: 3, mt: 200, img: '/images/template5/gallery-3.jpg' },
+        { id: 4, span: 4, start: 9, mt: -50, img: '/images/template5/gallery-4.jpg' },
+        { id: 5, span: 5, start: 2, mt: 150, img: '/images/template5/gallery-5.jpg' },
+        { id: 6, span: 7, start: 6, mt: -100, img: '/images/template5/hero-ambience.jpg' },
+        { id: 7, span: 4, start: 1, mt: 250, img: '/images/template5/legacy.jpg' },
+        { id: 8, span: 5, start: 7, mt: -50, img: '/images/template5/signature.jpg' },
+        { id: 9, span: 8, start: 3, mt: 150, img: '/images/template5/hero-bg.jpg' },
     ];
 
     return (
         <div ref={component} className={styles.container}>
-            <HUDSceneTracker />
+            <HUDSceneTracker scrollYProgress={scrollYProgress} />
             <div
                 className="parallax-bg-fixed"
                 style={{
@@ -251,7 +264,7 @@ export default function Template3() {
                     width: '100%',
                     height: '120%',
                     zIndex: 0,
-                    backgroundImage: 'url(https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80)',
+                    backgroundImage: 'url(/images/template5/hero-bg.jpg)',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     opacity: 0.15,
@@ -339,9 +352,9 @@ export default function Template3() {
                             key={spot.id}
                             className={`${styles.masonryItem} parallax-item`}
                             style={{
-                                left: spot.left,
-                                top: spot.top,
-                                zIndex: spot.zIndex
+                                gridColumn: `${spot.start} / span ${spot.span}`,
+                                marginTop: `${spot.mt}px`,
+                                zIndex: 10 - (spot.id % 5)
                             }}
                         >
                             <div className={styles.mImgWrap}>
@@ -349,8 +362,6 @@ export default function Template3() {
                                     className={styles.mImg}
                                     style={{
                                         backgroundImage: `url(${spot.img})`,
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center'
                                     }}
                                 ></div>
                             </div>
@@ -372,10 +383,34 @@ export default function Template3() {
                             className={styles.menuItemRow}
                             onMouseEnter={() => setActiveMenu({ img: item.img, name: item.name })}
                             onMouseLeave={() => setActiveMenu(null)}
+                            initial="initial"
+                            whileHover="hovered"
                         >
                             <div className={styles.itemMeta}>0{i + 1} // {item.price}</div>
                             <div className={styles.itemNameWrap}>
-                                <h3 className={styles.itemName}>{item.name}</h3>
+                                <h3 className={styles.itemName}>
+                                    {item.name.split('').map((char, index) => (
+                                        <motion.span
+                                            key={index}
+                                            style={{ display: 'inline-block' }}
+                                            variants={{
+                                                initial: { y: 0, opacity: 1, filter: 'blur(0px)' },
+                                                hovered: {
+                                                    y: -20,
+                                                    opacity: 0,
+                                                    filter: 'blur(10px)',
+                                                    transition: {
+                                                        delay: index * 0.02,
+                                                        duration: 0.4,
+                                                        ease: [0.16, 1, 0.3, 1]
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            {char === ' ' ? '\u00A0' : char}
+                                        </motion.span>
+                                    ))}
+                                </h3>
                                 <p className={styles.itemDesc}>{item.desc}</p>
                             </div>
                         </motion.div>

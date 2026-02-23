@@ -7,9 +7,9 @@ const GrainOverlay = () => <div className={styles.grainOverlay} />;
 const AmbienceShift = () => <div className={styles.gradientShift} />;
 
 // ─── UTILS: HUD SCENE TRACKER ────────────────────────────────
-const HUDSceneTracker = () => {
+const HUDSceneTracker = ({ scrollYProgress }: { scrollYProgress: any }) => {
     const [progress, setProgress] = useState(0);
-    const scenes = ["01", "02", "03", "04", "05"];
+    const scenes = ["01", "02", "03", "04", "05", "06"]; // Added 06 to match 6 cards
 
     const scrollToPhase = (index: number) => {
         const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -20,15 +20,10 @@ const HUDSceneTracker = () => {
     };
 
     useEffect(() => {
-        const handleScroll = () => {
-            const winScroll = document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = winScroll / height;
-            setProgress(scrolled);
-        };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+        return scrollYProgress.on("change", (latest: number) => {
+            setProgress(latest);
+        });
+    }, [scrollYProgress]);
 
     return (
         <div className={styles.sceneTracker}>
@@ -39,11 +34,10 @@ const HUDSceneTracker = () => {
                 return (
                     <div
                         key={i}
-                        className={styles.trackerNode}
-                        style={{ opacity: isActive ? 1 : 0.2 }}
+                        className={`${styles.trackerNode} ${isActive ? styles.trackerNodeActive : ''}`}
                         onClick={() => scrollToPhase(i)}
                     >
-                        <div className={styles.trackerDot} style={{ height: isActive ? '24px' : '12px', background: isActive ? 'var(--t1-accent)' : '#fff', opacity: isActive ? 1 : 0.3 }} />
+                        <div className={`${styles.trackerDot} ${isActive ? styles.trackerDotActive : ''}`} />
                         <span className={styles.trackerLabel}>PHASE_{s}</span>
                     </div>
                 );
@@ -119,22 +113,12 @@ export default function Template1() {
         <div ref={containerRef} className={styles.wrapper}>
             <GrainOverlay />
             <AmbienceShift />
-            <HUDSceneTracker />
+            <HUDSceneTracker scrollYProgress={scrollY} />
 
             <motion.div
+                className={styles.heroBackground}
                 style={{
-                    position: 'fixed',
-                    top: "-200px", // Offset for parallax
-                    left: 0,
-                    width: '100%',
-                    height: 'calc(100% + 400px)',
-                    zIndex: 0,
-                    backgroundImage: 'url(/images/template5/hero-bg.jpg)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    opacity: 0.1,
-                    y: bgY,
-                    filter: 'grayscale(100%) brightness(0.5)'
+                    y: bgY
                 }}
             />
             <div style={{ position: 'relative', zIndex: 1 }}>

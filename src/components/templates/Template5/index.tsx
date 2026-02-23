@@ -143,6 +143,10 @@ const Scene01_Opening = () => {
                     <span className={styles.hudValue}>ISO_800 // F1.4</span>
                 </div>
                 <div className={styles.hudLine}>
+                    <span className={styles.hudLabel}>PROTOCOL_STATUS</span>
+                    <span className={styles.hudValue}>INITIATED // AUTH_LEVEL_1</span>
+                </div>
+                <div className={styles.hudLine}>
                     <span className={styles.hudLabel}>COORDS</span>
                     <span className={styles.hudValue}>-7.0142 / 110.4215</span>
                 </div>
@@ -192,7 +196,7 @@ const Scene02_TitleReveal = () => {
                                         delay: i * 0.4 + j * 0.08,
                                         ease: [0.16, 1, 0.3, 1]
                                     }}
-                                    viewport={{ once: true }}
+                                    viewport={{ once: false }}
                                 >
                                     {char}
                                 </motion.span>
@@ -205,7 +209,7 @@ const Scene02_TitleReveal = () => {
                     initial={{ opacity: 0, letterSpacing: "1em" }}
                     whileInView={{ opacity: 1, letterSpacing: "0.6em" }}
                     transition={{ duration: 2, delay: 1.2 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: false }}
                 >
                     EST. MCMXCII // SEMARANG
                 </motion.p>
@@ -514,71 +518,194 @@ const Scene07_Gallery = () => {
 };
 
 // ─── SCENE 08 — SIGNATURE MOMENT (STILLNESS) ─────────────────────
-// Camera: Locked shot. Minimal motion. "Stillness after movement = premium."
 const Scene08_Signature = () => {
+    const containerRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start end", "end start"]
+    });
+
+    const xImg = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+    const yImg = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
+    const xText = useTransform(scrollYProgress, [0, 1], ["-30%", "10%"]);
+    const yText = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
+    const opacityText = useTransform(scrollYProgress, [0.2, 0.5, 0.8], [0, 1, 0]);
+
     return (
-        <section className={styles.scene08}>
+        <section ref={containerRef} className={styles.scene08} style={{ overflow: 'hidden' }}>
             <div className={styles.signatureImageWrap}>
                 <motion.img
+                    style={{ x: xImg, y: yImg }}
                     src="/images/template5/signature.jpg"
                     alt="Signature dish"
                     className={styles.signatureImg}
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    whileInView={{ opacity: 0.35, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 3, ease: [0.16, 1, 0.3, 1] }}
                 />
             </div>
-            <motion.div
-                className={styles.stillnessBg}
-                initial={{ opacity: 0, scale: 0.85 }}
-                whileInView={{ opacity: 0.08, scale: 1 }}
-                transition={{ duration: 3, ease: [0.16, 1, 0.3, 1] }}
-            >
-                STILLNESS.
-            </motion.div>
-            <motion.div
-                className={styles.container}
-                style={{ position: 'relative', zIndex: 2 }}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 1.5 }}
-            >
-                <span className={styles.sceneTag}>THE PROTOCOL</span>
-                <h2 className={styles.sectionTitle}>Precision in Peace.</h2>
-            </motion.div>
-        </section>
-    );
-};
 
-// ─── SCENE 09 — DECISION FRAME ───────────────────────────────────
-// Camera: Slight forward pull. CTA appears as destination, not interruption.
-const Scene09_Decision = () => {
-    return (
-        <section className={styles.scene09}>
-            <div className={styles.container}>
+            <motion.div
+                className={styles.movingTextBg}
+                style={{ x: xText, y: yText, opacity: opacityText }}
+            >
+                ARCHITECT_OF_FLAVOR
+            </motion.div>
+
+            <div className={styles.container} style={{ position: 'relative', zIndex: 5 }}>
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1.5 }}
-                    style={{ textAlign: 'center' }}
+                    initial={{ opacity: 0, x: -100 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: false }}
+                    transition={{ duration: 1.5, ease: "circOut" }}
                 >
-                    <h2 className={styles.sectionTitle} style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)' }}>
-                        Experience the Origin.
-                    </h2>
-                    <a href="#reserve" className={styles.ctaButton}>
-                        Secure Your Seat
-                    </a>
+                    <span className={styles.sceneTag}>THE PROTOCOL</span>
+                    <h2 className={styles.sectionTitle}>Precision in Peace.</h2>
                 </motion.div>
             </div>
         </section>
     );
 };
 
-// ─── SCENE 10 — END CREDITS ──────────────────────────────────────
-// Lighting warm. Motion minimal. Closure feeling.
-const Scene10_Footer = () => (
-    <footer className={styles.scene10}>
+// ─── NEW: STICKY SCROLL SECTION ──────────────────────────────────
+const Scene_StickyDepth = () => {
+    const containerRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start end", "end start"]
+    });
+
+    const y = useTransform(scrollYProgress, [0, 1], [0, -200]);
+    const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 1.2]);
+    const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+
+    return (
+        <section ref={containerRef} className={styles.stickyGallerySection}>
+            <div className={styles.stickyStage}>
+                <motion.div className={styles.stickyContent} style={{ y, scale, opacity }}>
+                    <div className={styles.stickyMediaWrap}>
+                        <img src="/images/template5/hero-ambience.jpg" alt="Atmosphere" className={styles.stickyImg} />
+                        <div className={styles.stickyLabel}>ATMOSPHERIC_DEPTH // 05</div>
+                    </div>
+                </motion.div>
+                <div className={styles.stickyTextLayer}>
+                    <motion.h2
+                        className={styles.stickyBigTitle}
+                        initial={{ x: -100, opacity: 0 }}
+                        whileInView={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 1.5 }}
+                    >
+                        UNVEILING THE <br /><span>INVISIBLE.</span>
+                    </motion.h2>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+// ─── SCENE 09 — PANORAMIC TRANSITION ─────────────────────────────
+const Scene09_Panoramic = () => {
+    const containerRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start end", "end start"]
+    });
+
+    const xBg = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+
+    return (
+        <section ref={containerRef} className={styles.scene09Minimal}>
+            <motion.img
+                src="/images/template5/hero-bg.jpg"
+                className={styles.panoramaImg}
+                style={{ x: xBg, opacity: 0.4 }}
+            />
+            <div className={styles.panoramaOverlayMinimal}>
+                <div className={styles.container}>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        className={styles.minimalLabel}
+                    >
+                        THE FINAL SELECTION // APPROACHING ORIGIN
+                    </motion.div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+// ─── SCENE 10 — THE ULTIMATE CHOICE (Centered Reveal) ──────────────
+const Scene10_Interactive = () => {
+    const [activeExp, setActiveExp] = useState<{ img: string, title: string, desc: string } | null>(null);
+    const containerRef = useRef(null);
+
+    const exps = [
+        { title: "CHEF'S GARDEN TABLE", img: "/images/template5/gallery-3.jpg", desc: "Farm-to-table in its purest form. Seasonal ingredients meet open-fire technique." },
+        { title: "THE DRY AGE VAULT", img: "/images/template5/gallery-4.jpg", desc: "Witness the process of time. Our signature cuts, aged to absolute perfection." },
+        { title: "OBSERVATORY DECK", img: "/images/template5/hero-bg.jpg", desc: "Dining under the infinite sky. A panoramic view of the city and our legacy." }
+    ];
+
+    return (
+        <section ref={containerRef} className={styles.scene10Interactive}>
+            <div className={styles.container}>
+                <div className={styles.choiceGrid}>
+                    <div className={styles.expListHeader}>
+                        <h2 className={styles.sectionTitle}>THE JOURNEY'S END.</h2>
+                        <p className={styles.sectionSubtitle}>SELECT_YOUR_PROTOCOL</p>
+                    </div>
+
+                    <div className={styles.expListContainer}>
+                        {exps.map((exp, i) => (
+                            <motion.div
+                                key={i}
+                                className={styles.expRowLarge}
+                                onMouseEnter={() => setActiveExp(exp)}
+                                onMouseLeave={() => setActiveExp(null)}
+                            >
+                                <span className={styles.expNum}>PROTOCOL_0{i + 1}</span>
+                                <h3 className={styles.expTitleLarge}>{exp.title}</h3>
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    <div className={styles.finalCTA}>
+                        <a href="#reserve" className={styles.ctaButtonLarge}>SECURE ACCESS</a>
+                    </div>
+                </div>
+            </div>
+
+            {/* THE CENTERED PROJECTION */}
+            <motion.div
+                className={styles.centeredProjection}
+                animate={{
+                    opacity: activeExp ? 1 : 0,
+                    scale: activeExp ? 1 : 0.9,
+                    y: activeExp ? "-50%" : "-45%",
+                    x: "-50%"
+                }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >
+                {activeExp && (
+                    <div className={styles.projectionInner}>
+                        <motion.img
+                            key={activeExp.img}
+                            initial={{ scale: 1.1, filter: 'blur(10px)' }}
+                            animate={{ scale: 1, filter: 'blur(0px)' }}
+                            src={activeExp.img}
+                            className={styles.projectionImgBase}
+                        />
+                        <div className={styles.projectionContent}>
+                            <h4 className={styles.projTitle}>{activeExp.title}</h4>
+                            <p className={styles.projDesc}>{activeExp.desc}</p>
+                        </div>
+                    </div>
+                )}
+            </motion.div>
+        </section>
+    );
+};
+
+// ─── SCENE 11 — END CREDITS ──────────────────────────────────────
+const Scene11_Footer = () => (
+    <footer className={styles.scene11}>
         <div className={styles.container}>
             <div className={styles.footerContent}>
                 <div>
@@ -625,8 +752,10 @@ export default function Template5() {
             <Scene06_Menu />
             <Scene07_Gallery />
             <Scene08_Signature />
-            <Scene09_Decision />
-            <Scene10_Footer />
+            <Scene_StickyDepth />
+            <Scene09_Panoramic />
+            <Scene10_Interactive />
+            <Scene11_Footer />
         </motion.div>
     );
 }

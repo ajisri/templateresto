@@ -9,8 +9,8 @@ export default function TextMask() {
         offset: ["start start", "end end"]
     });
 
-    // Scale from 1 to 50 (huge expansion)
-    const scale = useTransform(scrollYProgress, [0, 1], [1, 50]);
+    // Dramatic Scale from 1 to 200 (huge expansion through text hole)
+    const scale = useTransform(scrollYProgress, [0, 1], [1, 250]);
 
     return (
         <div ref={containerRef} className={styles.textMaskContainer}>
@@ -21,7 +21,18 @@ export default function TextMask() {
                     loop
                     playsInline
                     className={styles.maskedVideo}
-                    src="https://videos.pexels.com/video-files/3195383/3195383-uhd_2560_1440_25fps.mp4"
+                    src="/videos/template4-dining.mp4"
+                    style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+                />
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1 }} />
+                <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className={styles.maskedVideo}
+                    src="/videos/template4-steak.mp4"
+                    style={{ filter: "brightness(0.6) contrast(1.3)", zIndex: 2 }}
                 />
 
                 {/* 
@@ -31,15 +42,20 @@ export default function TextMask() {
                 */}
                 <motion.div
                     className={styles.maskOverlay}
-                    style={{ mixBlendMode: 'multiply' }}
+                    style={{ mixBlendMode: 'multiply', zIndex: 3 }}
                 >
                     <motion.div
                         style={{ scale }}
                         className={styles.maskTextWrapper}
                     >
-                        <h1 className={styles.maskText}>UNVEIL</h1>
+                        <h1 className={styles.maskText} style={{
+                            margin: 0,
+                            letterSpacing: "-0.05em",
+                            WebkitTextStroke: "2px #fff"
+                        }}>UNVEIL</h1>
                     </motion.div>
                 </motion.div>
+                <div className={styles.grainOverlay} />
             </div>
         </div>
     );

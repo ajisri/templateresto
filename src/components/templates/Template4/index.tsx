@@ -1,29 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import styles from './Template4.module.css';
 import StickyScroll from './StickyScroll';
 import TextMask from './TextMask';
+import Lenis from '@studio-freight/lenis';
 
 // ─── UTILS: GRAIN & DEPTH HACKS ─────────────────────────
 const GrainOverlay = () => <div className={styles.grainOverlay} />;
 const AmbienceShift = () => <div className={styles.gradientShift} />;
 
 // ─── UTILS: HUD SCENE TRACKER ────────────────────────────────
-const HUDSceneTracker = () => {
+const HUDSceneTracker = ({ scrollYProgress }: { scrollYProgress: any }) => {
     const [progress, setProgress] = useState(0);
     const scenes = ["01", "02", "03", "04", "05"];
 
     useEffect(() => {
-        const handleScroll = () => {
-            const winScroll = document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = winScroll / height;
-            setProgress(scrolled);
-        };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+        return scrollYProgress.on("change", (latest: number) => {
+            setProgress(latest);
+        });
+    }, [scrollYProgress]);
 
     return (
         <div className={styles.sceneTracker}>
@@ -32,9 +30,9 @@ const HUDSceneTracker = () => {
                 const end = (i + 1) / scenes.length;
                 const isActive = progress >= start && progress < end;
                 return (
-                    <div key={i} className={styles.trackerNode} style={{ opacity: isActive ? 1 : 0.2 }}>
+                    <div key={i} className={`${styles.trackerNode} ${isActive ? styles.trackerNodeActive : ''}`}>
                         <span className={styles.trackerLabel}>SCN_{s}</span>
-                        <div className={styles.trackerDot} style={{ width: isActive ? '12px' : '6px', background: isActive ? 'var(--t4-accent)' : '#fff' }} />
+                        <div className={`${styles.trackerDot} ${isActive ? styles.trackerDotActive : ''}`} />
                     </div>
                 );
             })}
@@ -63,7 +61,62 @@ const MenuItem = ({ name, price, desc, img, delay }: { name: string, price: stri
 
 export default function Template4() {
     const { scrollY } = useScroll();
-    const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+    const y1 = useTransform(scrollY, [0, 500], [0, 300]); // Deeper parallax
+    const opacityHero = useTransform(scrollY, [0, 500], [1, 0]);
+
+    useEffect(() => {
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        function raf(time: number) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+
+        return () => {
+            lenis.destroy();
+        };
+    }, []);
+
+    const comp = useRef<HTMLDivElement>(null);
+    useLayoutEffect(() => {
+        gsap.registerPlugin(ScrollTrigger);
+        const ctx = gsap.context(() => {
+            // Hero typography entrance
+            gsap.from(".hero-char", {
+                y: 100,
+                opacity: 0,
+                rotate: 20,
+                stagger: 0.05,
+                duration: 1.5,
+                ease: "power4.out",
+                delay: 0.2
+            });
+
+            // Parallax image within menu items
+            const menuImages = gsap.utils.toArray(`.${styles.itemImage}`);
+            menuImages.forEach((img: any) => {
+                gsap.to(img, {
+                    yPercent: 20,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: img.parentElement,
+                        start: "top bottom",
+                        end: "bottom top",
+                        scrub: true
+                    }
+                });
+            });
+
+        }, comp);
+        return () => ctx.revert();
+    }, []);
 
     const starters = [
         { name: "Smoked Bone Marrow", price: "185K", desc: "Roasted garlic, parsley salad, grilled sourdough.", img: "/images/template5/starter-platter.jpg" },
@@ -80,20 +133,13 @@ export default function Template4() {
     const bgY = useTransform(scrollY, [0, 2000], [0, 300]);
 
     return (
-        <div className={styles.wrapper}>
+        <div className={styles.wrapper} ref={comp}>
             <GrainOverlay />
             <AmbienceShift />
-            <HUDSceneTracker />
+            <HUDSceneTracker scrollYProgress={scrollY} />
             <motion.div
+                className={styles.heroBackgroundTextured}
                 style={{
-                    position: 'fixed',
-                    top: "-150px",
-                    left: 0,
-                    width: '100%',
-                    height: 'calc(100% + 300px)',
-                    zIndex: 0,
-                    backgroundImage: 'url(https://www.transparenttextures.com/patterns/carbon-fibre.png)', // Texture
-                    opacity: 0.1,
                     y: bgY
                 }}
             />
@@ -110,18 +156,20 @@ export default function Template4() {
                         </div>
                     </div>
                     <motion.div style={{ y: y1 }} className={styles.heroContent}>
-                        <motion.h1
-                            className={styles.heroTitle}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 1.5, ease: "circOut" }}
-                        >
-                            INDUSTRIAL<br />LUXURY
-                        </motion.h1>
+                        <h1 className={styles.heroTitle} style={{ opacity: opacityHero.get() }}>
+                            {"INDUSTRIAL".split("").map((char, i) => (
+                                <span key={i} className="hero-char" style={{ display: "inline-block" }}>{char}</span>
+                            ))}
+                            <br />
+                            {"LUXURY".split("").map((char, i) => (
+                                <span key={i + 10} className="hero-char" style={{ display: "inline-block" }}>{char}</span>
+                            ))}
+                        </h1>
                         <motion.p
                             className={styles.heroSubtitle}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
+                            style={{ opacity: opacityHero }}
                             transition={{ delay: 0.5, duration: 1 }}
                         >
                             EST. 2024 • GASTRO PUB • URBAN

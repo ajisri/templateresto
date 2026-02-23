@@ -4,13 +4,24 @@
     background: #0a0a0a;
     overflow: hidden;
     position: relative;
-    cursor: grab;
+    cursor: crosshair;
+    /* Director's Cam focus */
     font-family: var(--tm5-font-sans);
     --t2-accent: #b89a68;
+    transition: background-color 1.2s var(--tm5-ease);
 }
 
-.container:active {
-    cursor: grabbing;
+.hasHover {
+    background: #0d0d0d;
+}
+
+.hoverVisual {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(circle at center, rgba(184, 154, 104, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+    transition: opacity 1s var(--tm5-ease);
 }
 
 .header {
@@ -178,4 +189,9 @@
     color: #fff;
     font-family: monospace;
     letter-spacing: 0.2em;
+}
+
+.relockBtn {
+    width: auto !important;
+    padding: 0 1rem !important;
 }

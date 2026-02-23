@@ -1,13 +1,35 @@
 import { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import styles from './Template2.module.css';
 
 const GrainOverlay = () => <div className={styles.grainOverlay} />;
 const AmbienceShift = () => <div className={styles.gradientShift} />;
 
 export default function Template2() {
-    const containerRef = useRef(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
+    const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+
+    const springConfig = { damping: 30, stiffness: 100 };
+    const x = useSpring(mouseX, springConfig);
+    const y = useSpring(mouseY, springConfig);
+
+    const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (!containerRef.current) return;
+        const { width, height, left, top } = containerRef.current.getBoundingClientRect();
+
+        // Calculate relative position from center (-0.5 to 0.5)
+        const relX = (e.clientX - left) / width - 0.5;
+        const relY = (e.clientY - top) / height - 0.5;
+
+        // Define the range of movement (e.g., 80% of canvas size)
+        // Adjust these values to control how far it pans
+        mouseX.set(-relX * 2400);
+        mouseY.set(-relY * 1800);
+    };
 
     const handleZoom = (type: 'in' | 'out' | 'fit') => {
         setScale(prev => {
@@ -38,24 +60,27 @@ export default function Template2() {
     ];
 
     return (
-        <div className={styles.container} ref={containerRef}>
+        <div className={`${styles.container} ${hoveredItem ? styles.hasHover : ''}`} ref={containerRef} onPointerMove={handlePointerMove}>
             <GrainOverlay />
             <AmbienceShift />
-            <div className={styles.header}>
-                <h1>EXPLORER_VIEW</h1>
-                <p>DRAG TO NAVIGATE THE ORIGIN</p>
+            <div className={styles.hoverVisual} style={{ opacity: hoveredItem ? 1 : 0 }} />
+            <header className={styles.header}>
+                <div className={styles.headerTitle}>
+                    <h1>EXPLORER_VIEW</h1>
+                    <p>CURSOR TO TRAVERSE THE ARCHIVE</p>
+                </div>
                 <div className={styles.controls}>
                     <button onClick={() => handleZoom('out')}>-</button>
-                    <button onClick={() => handleZoom('fit')} style={{ width: 'auto', padding: '0 1rem' }}>RE-LOCK CAM</button>
-                    <span>{Math.round(scale * 100)}%</span>
+                    <button onClick={() => handleZoom('fit')} className={styles.relockBtn}>RE-LOCK CAM</button>
+                    <span className={styles.scaleValue}>{Math.round(scale * 100)}%</span>
                     <button onClick={() => handleZoom('in')}>+</button>
                 </div>
-            </div>
+            </header>
 
             <div className={styles.heroMinimalUI}>
                 <div className={styles.hudLine}>
                     <span className={styles.hudLabel}>REC [●] // LIVE_FEED</span>
-                    <span className={styles.hudValue}>CANVAS_MODE_ACTIVE</span>
+                    <span className={styles.hudValue}>CURSOR_NAV_ACTIVE</span>
                 </div>
                 <div className={styles.hudLine}>
                     <span className={styles.hudLabel}>CAM_02 // WIDE_ANGLE</span>
@@ -66,11 +91,11 @@ export default function Template2() {
             <div className={styles.viewport}>
                 <motion.div
                     className={styles.canvas}
-                    drag
-                    dragConstraints={false}
-                    dragElastic={0}
-                    dragMomentum={true}
-                    style={{ scale }}
+                    style={{
+                        scale,
+                        x,
+                        y
+                    }}
                 >
                     <div className={styles.grid}>
                         {items.map(item => (
@@ -82,9 +107,12 @@ export default function Template2() {
                                     left: `calc(50% + ${item.x}px)`,
                                     top: `calc(50% + ${item.y}px)`,
                                     backgroundColor: item.color,
-                                    rotate: item.rotate
+                                    rotate: item.rotate,
+                                    zIndex: hoveredItem === item.id ? 100 : 1
                                 }}
-                                whileHover={{ scale: 1.1, zIndex: 100 }}
+                                onHoverStart={() => setHoveredItem(item.id)}
+                                onHoverEnd={() => setHoveredItem(null)}
+                                whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
                             >
                                 {item.type === 'image' ? (

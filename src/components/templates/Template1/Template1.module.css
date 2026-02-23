@@ -173,6 +173,11 @@
     gap: 1rem;
     cursor: pointer;
     transition: opacity 0.3s;
+    opacity: 0.2;
+}
+
+.trackerNodeActive {
+    opacity: 1;
 }
 
 .trackerLabel {
@@ -188,6 +193,12 @@
     background: #fff;
     opacity: 0.3;
     transition: all 0.4s var(--tm5-ease);
+}
+
+.trackerDotActive {
+    height: 24px;
+    background: var(--t1-accent);
+    opacity: 1;
 }
 
 .heroMinimalUI {
@@ -224,4 +235,20 @@
 
 .sceneSpacer {
     height: 30vh;
+}
+
+.heroBackground {
+    position: fixed;
+    top: -200px;
+    /* Offset for parallax */
+    left: 0;
+    width: 100%;
+    height: calc(100% + 400px);
+    z-index: 0;
+    background-image: url('/images/template5/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.1;
+    filter: grayscale(100%) brightness(0.5);
+    pointer-events: none;
 }
