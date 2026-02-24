@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import styles from './Lightship.module.css';
 
@@ -17,10 +17,11 @@ import styles from './Lightship.module.css';
  * SCENE 04: Legacy Flashback — Split narrative
  * SCENE 05: Golden Hour Shift — Imperceptible bg color change (NOT a section)
  * SCENE 06: Menu Closeups — Macro, slow lateral, user controls pace
- * SCENE 07: Social Energy — Gallery grid, staggered entry
- * SCENE 08: Signature Moment — Locked shot, stillness
- * SCENE 09: Decision Frame — CTA as destination
- * SCENE 10: End Credits — Footer
+ * SCENE 07: Events — Local energy, live feed
+ * SCENE 08: Social Energy — Gallery grid, staggered entry
+ * SCENE 09: Signature Moment — Locked shot, stillness
+ * SCENE 10: Decision Frame — CTA as destination
+ * SCENE 11: End Credits — Footer
  */
 
 // ─── UTILS: LAZY IMAGE WITH SHIMMER ──────────────────────────
@@ -56,19 +57,35 @@ const ParticleField = () => {
 
 // ─── UTILS: HUD SCENE TRACKER ────────────────────────────────
 const HUDSceneTracker = ({ progress }: { progress: any }) => {
-    const scenes = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"];
+    const scenes = [
+        { id: "01", label: "ESTABLISH", range: [0, 0.05] },
+        { id: "02", label: "UNVEIL", range: [0.05, 0.20] },
+        { id: "03", label: "TRANSITION", range: [0.20, 0.24] },
+        { id: "04", label: "LEGACY", range: [0.24, 0.29] },
+        { id: "05", label: "ATMOS_SHIFT", range: [0.29, 0.34] },
+        { id: "06", label: "MENU_SELECT", range: [0.34, 0.41] },
+        { id: "07", label: "RITUALS", range: [0.41, 0.54] },
+        { id: "08", label: "ATMOSPHERE", range: [0.54, 0.61] },
+        { id: "09", label: "PRECISION", range: [0.61, 0.65] },
+        { id: "10", label: "DEPTH", range: [0.65, 0.80] },
+        { id: "11", label: "DESTINATION", range: [0.80, 0.99] },
+        { id: "12", label: "FOOTER", range: [0.99, 1.0] }
+    ];
     return (
         <div className={styles.sceneTracker}>
             {scenes.map((s, i) => {
-                const start = i / scenes.length;
-                const end = (i + 1) / scenes.length;
-                const mid1 = start + (end - start) * 0.2;
-                const mid2 = start + (end - start) * 0.8;
+                const [start, end] = s.range;
+                const mid1 = start + (end - start) * 0.1;
+                const mid2 = start + (end - start) * 0.9;
+
                 // eslint-disable-next-line react-hooks/rules-of-hooks
-                const opacity = useTransform(progress, [start, mid1, mid2, end], [0.2, 1, 1, 0.2]);
+                const opacity = useTransform(progress, [start, mid1, mid2, end], [0.1, 1, 1, 0.1]);
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                const scale = useTransform(progress, [start, mid1, mid2, end], [0.8, 1.1, 1.1, 0.8]);
+
                 return (
-                    <motion.div key={i} className={styles.trackerNode} style={{ opacity }}>
-                        <span className={styles.trackerLabel}>SCN_{s}</span>
+                    <motion.div key={i} className={styles.trackerNode} style={{ opacity, scale }}>
+                        <span className={styles.trackerLabel}>{s.id} // {s.label}</span>
                         <div className={styles.trackerDot} />
                     </motion.div>
                 );
@@ -112,12 +129,13 @@ const Scene01_Opening = () => {
         offset: ["start start", "end start"]
     });
 
-    const scale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
-    const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.3, 0.8]);
+    const scale = useTransform(scrollYProgress, [0, 1], [1, 1.4]);
+    const overlayOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.3, 0.1, 0.8]);
+    const yHero = useTransform(scrollYProgress, [0, 1], [0, 150]);
 
     return (
         <section ref={ref} className={styles.scene01}>
-            <motion.div className={styles.heroMedia} style={{ scale }}>
+            <motion.div className={styles.heroMedia} style={{ scale, y: yHero }}>
                 <img
                     src="/images/template5/hero-bg.jpg"
                     alt="The Tavern — establishing shot"
@@ -178,41 +196,64 @@ const Scene01_Opening = () => {
 // Rule: "Tidak ada gerakan lain. Silence = power."
 const Scene02_TitleReveal = () => {
     const titleLines = ["THE", "TAVERN"];
+    const [showVideo, setShowVideo] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setShowVideo(true), 1500);
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
         <section className={styles.scene02}>
-            <div className={styles.titleRevealContent}>
-                <div className={styles.cinematicHeader}>
+            {/* BACKGROUND LAYER (Total Black) */}
+            <div className={styles.scene02BlackWall} />
+
+            {/* VIDEO PROJECTOR (Only visible through the multiply mask) */}
+            <div className={styles.videoProjectorContainer}>
+                <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className={styles.videoInTextBody}
+                    src="/videos/template4-steak.mp4"
+                    style={{ opacity: showVideo ? 0.9 : 0 }}
+                />
+            </div>
+
+            {/* THE MULTIPLY MASK (White = Pass, Black = Block) */}
+            <div className={`${styles.textMaskMasterLayer} ${showVideo ? styles.maskActive : ''}`}>
+                <div className={styles.cinematicHeaderCenter}>
                     {titleLines.map((line, i) => (
                         <div key={i} className={styles.titleLineWrap}>
                             {line.split("").map((char, j) => (
                                 <motion.span
                                     key={j}
                                     className={styles.heroTitleChar}
-                                    initial={{ opacity: 0, scale: 1.2, filter: "blur(10px)" }}
-                                    whileInView={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                                    initial={{ opacity: 0, y: 20, filter: "blur(20px)" }}
+                                    whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                                     transition={{
                                         duration: 1.5,
                                         delay: i * 0.4 + j * 0.08,
                                         ease: [0.16, 1, 0.3, 1]
                                     }}
-                                    viewport={{ once: false }}
+                                    viewport={{ once: true }}
                                 >
                                     {char}
                                 </motion.span>
                             ))}
                         </div>
                     ))}
+                    <motion.p
+                        className={styles.heroSubtitle}
+                        initial={{ opacity: 0, letterSpacing: "1em" }}
+                        whileInView={{ opacity: 1, letterSpacing: "0.6em" }}
+                        transition={{ duration: 2, delay: 1.2 }}
+                        viewport={{ once: true }}
+                    >
+                        EST. MCMXCII // SEMARANG
+                    </motion.p>
                 </div>
-                <motion.p
-                    className={styles.heroSubtitle}
-                    initial={{ opacity: 0, letterSpacing: "1em" }}
-                    whileInView={{ opacity: 1, letterSpacing: "0.6em" }}
-                    transition={{ duration: 2, delay: 1.2 }}
-                    viewport={{ once: false }}
-                >
-                    EST. MCMXCII // SEMARANG
-                </motion.p>
             </div>
         </section>
     );
@@ -483,9 +524,90 @@ const Scene06_Menu = () => {
     );
 };
 
-// ─── SCENE 07 — SOCIAL ENERGY ─────────────────────────────────────
-// Camera: Multiple medium shots. Staggered entry. Social proof without noise.
-const Scene07_Gallery = () => {
+// ─── SCENE 07 — EVENTS (THE RITUALS) ─────────────────────────────
+const Scene07_Events = () => {
+    const events = [
+        {
+            name: "JAZZ NOIR NIGHT",
+            date: "EVERY FRIDAY",
+            time: "20:00 — LATE",
+            img: "/images/template5/gallery-4.jpg",
+            desc: "The saxophone bleeds into the shadows. A ritual of rhythm and smoke for the nocturnal elite.",
+            meta: "ISO_MAX // LOW_LIGHT_SESSION"
+        },
+        {
+            name: "WINE PAIRING SERIES",
+            date: "MONTHLY",
+            time: "19:00 — 22:00",
+            img: "/images/template5/gallery-5.jpg",
+            desc: "Ancient grapes meet modern steel. A systematic approach to the art of the vintage.",
+            meta: "AGED_OAK // TANIN_STRIKE"
+        },
+        {
+            name: "THE PRIVATE TABLE",
+            date: "BY APPOINTMENT",
+            time: "CUSTOM",
+            img: "/images/template5/hero-ambience.jpg",
+            desc: "Sanctuary for the few. A bespoke narrative crafted for your most vital milestones.",
+            meta: "VVIP_PROTOCOL // SECLUDED"
+        }
+    ];
+
+    return (
+        <section className={styles.scene07EventsCinematic}>
+            <div className={styles.container}>
+                <motion.div
+                    className={styles.ritualsHeader}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                >
+                    <span className={styles.sceneTag}>TECHNICAL_RITE // 07</span>
+                    <h2 className={styles.ritualsTitle}>The Rituals.</h2>
+                    <div className={styles.ritualsDivider} />
+                </motion.div>
+
+                <div className={styles.ritualsStoryboard}>
+                    {events.map((event, i) => (
+                        <motion.div
+                            key={i}
+                            className={styles.ritualFrame}
+                            initial={{ opacity: 0, y: 50 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 1.2, delay: i * 0.2 }}
+                            viewport={{ once: true, margin: "-10%" }}
+                        >
+                            <div className={styles.ritualVisual}>
+                                <div className={styles.ritualImageInner}>
+                                    <CinematicImage src={event.img} alt={event.name} />
+                                    <div className={styles.ritualOverlayLabel}>{event.meta}</div>
+                                </div>
+                            </div>
+                            <div className={styles.ritualData}>
+                                <div className={styles.ritualTimeGroup}>
+                                    <span>{event.date}</span>
+                                    <div className={styles.ritualTimeDot} />
+                                    <span>{event.time}</span>
+                                </div>
+                                <h3 className={styles.ritualName}>{event.name}</h3>
+                                <p className={styles.ritualDesc}>{event.desc}</p>
+                                <motion.div
+                                    className={styles.ritualCTA}
+                                    whileHover={{ x: 10 }}
+                                >
+                                    CONNECT_TO_ACCESS →
+                                </motion.div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
+// ─── SCENE 08 — SOCIAL ENERGY ─────────────────────────────────────
+const Scene08_Gallery = () => {
     const images = [
         "/images/template5/gallery-1.jpg",
         "/images/template5/gallery-2.jpg",
@@ -495,9 +617,9 @@ const Scene07_Gallery = () => {
     ];
 
     return (
-        <section className={styles.scene07}>
+        <section className={styles.scene08}>
             <div className={styles.container}>
-                <span className={styles.sceneTag}>SCENE 07 // ATMOSPHERE</span>
+                <span className={styles.sceneTag}>SCENE 08 // ATMOSPHERE</span>
                 <div className={styles.galleryGrid}>
                     {images.map((src, i) => (
                         <motion.div
@@ -517,8 +639,8 @@ const Scene07_Gallery = () => {
     );
 };
 
-// ─── SCENE 08 — SIGNATURE MOMENT (STILLNESS) ─────────────────────
-const Scene08_Signature = () => {
+// ─── SCENE 09 — SIGNATURE MOMENT (STILLNESS) ─────────────────────
+const Scene09_Signature = () => {
     const containerRef = useRef(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -532,7 +654,7 @@ const Scene08_Signature = () => {
     const opacityText = useTransform(scrollYProgress, [0.2, 0.5, 0.8], [0, 1, 0]);
 
     return (
-        <section ref={containerRef} className={styles.scene08} style={{ overflow: 'hidden' }}>
+        <section ref={containerRef} className={styles.scene09} style={{ overflow: 'hidden' }}>
             <div className={styles.signatureImageWrap}>
                 <motion.img
                     style={{ x: xImg, y: yImg }}
@@ -600,8 +722,8 @@ const Scene_StickyDepth = () => {
     );
 };
 
-// ─── SCENE 09 — PANORAMIC TRANSITION ─────────────────────────────
-const Scene09_Panoramic = () => {
+// ─── SCENE 10 — PANORAMIC TRANSITION ─────────────────────────────
+const Scene10_Panoramic = () => {
     const containerRef = useRef(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -611,7 +733,7 @@ const Scene09_Panoramic = () => {
     const xBg = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
     return (
-        <section ref={containerRef} className={styles.scene09Minimal}>
+        <section ref={containerRef} className={styles.scene10Minimal}>
             <motion.img
                 src="/images/template5/hero-bg.jpg"
                 className={styles.panoramaImg}
@@ -632,69 +754,126 @@ const Scene09_Panoramic = () => {
     );
 };
 
-// ─── SCENE 10 — THE ULTIMATE CHOICE (Centered Reveal) ──────────────
-const Scene10_Interactive = () => {
-    const [activeExp, setActiveExp] = useState<{ img: string, title: string, desc: string } | null>(null);
+// ─── SCENE 11 — THE ULTIMATE CHOICE (Atmospheric Visions) ────────
+const Scene11_Interactive = () => {
+    const [activeExp, setActiveExp] = useState<{ img: string, title: string, desc: string, protocol: string, stats: string[] } | null>(null);
     const containerRef = useRef(null);
 
     const exps = [
-        { title: "CHEF'S GARDEN TABLE", img: "/images/template5/gallery-3.jpg", desc: "Farm-to-table in its purest form. Seasonal ingredients meet open-fire technique." },
-        { title: "THE DRY AGE VAULT", img: "/images/template5/gallery-4.jpg", desc: "Witness the process of time. Our signature cuts, aged to absolute perfection." },
-        { title: "OBSERVATORY DECK", img: "/images/template5/hero-bg.jpg", desc: "Dining under the infinite sky. A panoramic view of the city and our legacy." }
+        {
+            title: "CHEF'S GARDEN TABLE",
+            img: "/images/template5/gallery-3.jpg",
+            desc: "Farm-to-table in its purest form. Seasonal ingredients meet open-fire technique.",
+            protocol: "BIO_HARVEST",
+            stats: ["TEMP: 800°C", "YIELD: 100%", "ORIGIN: LOCAL"]
+        },
+        {
+            title: "THE DRY AGE VAULT",
+            img: "/images/template5/gallery-4.jpg",
+            desc: "Witness the process of time. Our signature cuts, aged to absolute perfection.",
+            protocol: "TIME_STASIS",
+            stats: ["DAYS: 45", "HUMID: 80%", "GRADE: MB5+"]
+        },
+        {
+            title: "OBSERVATORY DECK",
+            img: "/images/template5/hero-bg.jpg",
+            desc: "Dining under the infinite sky. A panoramic view of the city and our legacy.",
+            protocol: "SKY_REACH",
+            stats: ["ALT: 125M", "VIEW: 360°", "FLOW: OPEN"]
+        }
     ];
 
     return (
-        <section ref={containerRef} className={styles.scene10Interactive}>
+        <section ref={containerRef} className={styles.scene11Visions}>
             <div className={styles.container}>
-                <div className={styles.choiceGrid}>
-                    <div className={styles.expListHeader}>
-                        <h2 className={styles.sectionTitle}>THE JOURNEY'S END.</h2>
-                        <p className={styles.sectionSubtitle}>SELECT_YOUR_PROTOCOL</p>
+                <div className={styles.visionsGrid}>
+                    <div className={styles.visionsHeader}>
+                        <motion.h2
+                            className={styles.sectionTitle}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 1.2 }}
+                        >THE JOURNEY'S END.</motion.h2>
+                        <motion.div
+                            className={styles.visionsSubtitle}
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 0.6 }}
+                            transition={{ delay: 0.5 }}
+                        >
+                            SELECT_YOUR_DESTINATION
+                        </motion.div>
                     </div>
 
-                    <div className={styles.expListContainer}>
+                    <div className={styles.visionsList}>
                         {exps.map((exp, i) => (
                             <motion.div
                                 key={i}
-                                className={styles.expRowLarge}
+                                className={`${styles.visionRow} ${activeExp?.protocol === exp.protocol ? styles.visionRowActive : ''}`}
                                 onMouseEnter={() => setActiveExp(exp)}
                                 onMouseLeave={() => setActiveExp(null)}
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.15 }}
                             >
-                                <span className={styles.expNum}>PROTOCOL_0{i + 1}</span>
-                                <h3 className={styles.expTitleLarge}>{exp.title}</h3>
+                                <div className={styles.visionMeta}>
+                                    <span className={styles.visionIdx}>P_{i + 1}</span>
+                                    <div className={styles.visionMetaLine} />
+                                </div>
+                                <h3 className={styles.visionTitle}>{exp.title}</h3>
                             </motion.div>
                         ))}
                     </div>
 
-                    <div className={styles.finalCTA}>
-                        <a href="#reserve" className={styles.ctaButtonLarge}>SECURE ACCESS</a>
+                    <div className={styles.visionsCTAWrap}>
+                        <motion.a
+                            href="#reserve"
+                            className={styles.ctaButtonVision}
+                            whileHover={{ letterSpacing: '0.6em' }}
+                        >
+                            SECURE_ACCESS
+                        </motion.a>
                     </div>
                 </div>
             </div>
 
-            {/* THE CENTERED PROJECTION */}
+            {/* THE FLOATING VESTIGE (Atmospheric Projection) */}
             <motion.div
-                className={styles.centeredProjection}
+                className={`${styles.floatingVestige} ${activeExp ? styles.vestigeActive : ''}`}
                 animate={{
                     opacity: activeExp ? 1 : 0,
-                    scale: activeExp ? 1 : 0.9,
+                    scale: activeExp ? 1.05 : 0.9,
                     y: activeExp ? "-50%" : "-45%",
-                    x: "-50%"
+                    x: "-50%",
+                    filter: activeExp ? "blur(0px)" : "blur(40px)"
                 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
                 {activeExp && (
-                    <div className={styles.projectionInner}>
+                    <div className={styles.vestigeInner}>
+                        <div className={styles.etherealOverlay} />
                         <motion.img
                             key={activeExp.img}
-                            initial={{ scale: 1.1, filter: 'blur(10px)' }}
-                            animate={{ scale: 1, filter: 'blur(0px)' }}
+                            initial={{ opacity: 0, scale: 1.1 }}
+                            animate={{ opacity: 0.7, scale: 1 }}
+                            transition={{ duration: 2 }}
                             src={activeExp.img}
-                            className={styles.projectionImgBase}
+                            className={styles.vestigeImg}
                         />
-                        <div className={styles.projectionContent}>
-                            <h4 className={styles.projTitle}>{activeExp.title}</h4>
-                            <p className={styles.projDesc}>{activeExp.desc}</p>
+                        <div className={styles.vestigeContent}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.4 }}
+                            >
+                                <span className={styles.vestigeProtocol}>{activeExp.protocol}</span>
+                                <h4 className={styles.vestigeTitle}>{activeExp.title}</h4>
+                                <p className={styles.vestigeDesc}>{activeExp.desc}</p>
+                                <div className={styles.vestigeStats}>
+                                    {activeExp.stats.map((s, idx) => (
+                                        <span key={idx} className={styles.vestigeStat}>{s}</span>
+                                    ))}
+                                </div>
+                            </motion.div>
                         </div>
                     </div>
                 )}
@@ -703,9 +882,9 @@ const Scene10_Interactive = () => {
     );
 };
 
-// ─── SCENE 11 — END CREDITS ──────────────────────────────────────
-const Scene11_Footer = () => (
-    <footer className={styles.scene11}>
+// ─── SCENE 12 — END CREDITS ──────────────────────────────────────
+const Scene12_Footer = () => (
+    <footer className={styles.scene12}>
         <div className={styles.container}>
             <div className={styles.footerContent}>
                 <div>
@@ -750,12 +929,13 @@ export default function Template5() {
             <Scene04_Legacy />
             <Scene05_GoldenHour />
             <Scene06_Menu />
-            <Scene07_Gallery />
-            <Scene08_Signature />
+            <Scene07_Events />
+            <Scene08_Gallery />
+            <Scene09_Signature />
             <Scene_StickyDepth />
-            <Scene09_Panoramic />
-            <Scene10_Interactive />
-            <Scene11_Footer />
+            <Scene10_Panoramic />
+            <Scene11_Interactive />
+            <Scene12_Footer />
         </motion.div>
     );
 }

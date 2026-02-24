@@ -140,21 +140,21 @@ export default function Template6() {
                         price="ZONE_A // BAR"
                         desc="GRAVITASI UTAMA RESTORAN. KONSTRUKSI KURSI KAYU TINGGI. PENCAHAYAAN MINIMAL MENGISOLASI DENTING GELAS DAN MESIN KOPI. ZONA EKSKLUSIF UNTUK PATRON SOLO."
                         spans={4}
-                        img="/images/template5/hero-ambience.jpg"
+                        img="/images/template6/the_heart.png"
                     />
                     <MenuBlock
                         name="The Lounge"
                         price="ZONE_B // SOFA"
                         desc="DIKELILINGI STRUKTUR BATA MENTAH. SECARA SPESIFIK DILENGKAPI MATERIAL KULIT VINTAGE. DISTRIK KHUSUS ELIT UNTUK DURASI MENETAP MAKSIMAL."
                         spans={4}
-                        img="/images/template5/gallery-1.jpg"
+                        img="/images/template6/the_lounge.png"
                     />
                     <MenuBlock
                         name="The Veranda"
                         price="ZONE_C // OUTDOOR"
                         desc="TERPAPAR LANGSUNG DERU TANJAKAN RINJANI. FRIKSI AKUSTIK TINGGI, NAMUN DIKOMPENSASI OLEH SIRKULASI ANGIN PERBUKITAN SEMARANG. DINAMIS."
                         spans={4}
-                        img="/images/template5/gallery-2.jpg"
+                        img="/images/template6/the_veranda.png"
                     />
 
                     {/* 02: SOUNDSCAPE */}
@@ -193,21 +193,21 @@ export default function Template6() {
                         price="LUX // 2700K"
                         desc="SPESIFIKASI CAHAYA KONSISTEN. ABSENSI NEON DINGIN GUNA MENJAMIN OVERLAY WARNA DAGING DAN AMBER BIR TEREKSPOS PRESISI."
                         spans={4}
-                        img="/images/template5/gallery-5.jpg"
+                        img="/images/template6/thermal_warm.png"
                     />
                     <MenuBlock
                         name="Taktil Klasik"
                         price="SURFACE // MENU"
                         desc="PENGGUNAAN KERTAS TEBAL DAN CLIPBOARD KAYU PRESISI DENGAN TIPOGRAFI KLASIK. MENGHASILKAN SENSASI TAKTIL BERAT DAN BERKELAS."
                         spans={4}
-                        img="/images/template5/menu-1.jpg"
+                        img="/images/template6/taktil_klasik.png"
                     />
                     <MenuBlock
                         name="Industrial"
                         price="BASE // LANTAI"
                         desc="PEMAKAIAN POLA UBIN VINTAGE BERPADU HAMPARAN SEMEN POLES. KONSTRUKSI ESTETIK PABRIK TUA DENGAN TINGKAT KEBERSIHAN LABORATORIUM."
                         spans={4}
-                        img="/images/template5/gallery-3.jpg"
+                        img="/images/template6/industrial_floor.png"
                     />
 
                     {/* 04 & 05: RITUAL & GEOGRAFIS */}
