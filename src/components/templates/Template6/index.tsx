@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import styles from './Template6.module.css';
 import PerspectiveText from './PerspectiveText';
 import PixelTransition from './PixelTransition';
@@ -7,33 +7,6 @@ import PixelTransition from './PixelTransition';
 const GrainOverlay = () => <div className={styles.grainOverlay} />;
 const AmbienceShift = () => <div className={styles.gradientShift} />;
 
-// ─── UTILS: HUD SCENE TRACKER ────────────────────────────────
-const HUDSceneTracker = ({ scrollYProgress }: { scrollYProgress: any }) => {
-    const [progress, setProgress] = useState(0);
-    const scenes = ["01", "02", "03", "04", "05", "06"];
-
-    useEffect(() => {
-        return scrollYProgress.on("change", (latest: number) => {
-            setProgress(latest);
-        });
-    }, [scrollYProgress]);
-
-    return (
-        <div className={styles.sceneTracker}>
-            {scenes.map((s, i) => {
-                const start = i / scenes.length;
-                const end = (i + 1) / scenes.length;
-                const isActive = progress >= start && progress < end;
-                return (
-                    <div key={i} className={styles.trackerNode} style={{ opacity: isActive ? 1 : 0.2 }}>
-                        <div className={styles.trackerDot} style={{ height: isActive ? '32px' : '16px', background: isActive ? 'var(--t6-accent)' : '#fff' }} />
-                        <span className={styles.trackerLabel}>BLOCK_{s}</span>
-                    </div>
-                );
-            })}
-        </div>
-    );
-};
 
 import MouseScaleGallery from './MouseScaleGallery';
 
@@ -76,7 +49,6 @@ export default function Template6() {
         <div ref={containerRef} className={styles.wrapper}>
             <GrainOverlay />
             <AmbienceShift />
-            <HUDSceneTracker scrollYProgress={scrollYProgress} />
             <motion.div
                 style={{
                     position: 'fixed',
@@ -97,17 +69,17 @@ export default function Template6() {
 
                 <header className={styles.header}>
                     <PerspectiveText text="TAVERN" />
-                    <div className={styles.heroMinimalUI}>
-                        <div className={styles.hudLine}>
-                            <span className={styles.hudLabel}>REC_MODE</span>
-                            <span className={styles.hudValue}>EDITORIAL_TRANSFORMATION</span>
-                        </div>
-                        <div className={styles.hudLine}>
-                            <span className={styles.hudLabel}>CAM_06</span>
-                            <span className={styles.hudValue}>PRIME_35MM</span>
-                        </div>
-                    </div>
                 </header>
+
+                <nav className={styles.systemNav}>
+                    <ul className={styles.navList}>
+                        <li><a href="#anatomi">01 ANATOMI</a></li>
+                        <li><a href="#akustik">02 AKUSTIK</a></li>
+                        <li><a href="#materialitas">03 MATERIAL</a></li>
+                        <li><a href="#geo-ritual">04/05 GEO-RITUAL</a></li>
+                        <li><a href="#nitty-gritty">06 DETAILS</a></li>
+                    </ul>
+                </nav>
 
                 <div className={styles.grid}>
                     {/* TRANSFORMATION BLOCK */}
@@ -130,7 +102,7 @@ export default function Template6() {
                     </div>
 
                     {/* 01: ANATOMI RUANG */}
-                    <div className={styles.categoryHeader}>
+                    <div id="anatomi" className={styles.categoryHeader}>
                         <span style={{ fontFamily: 'Courier New', color: '#666' }}>01 //</span>
                         <h2 className={styles.catTitle}>ANATOMI RUANG</h2>
                     </div>
@@ -158,7 +130,7 @@ export default function Template6() {
                     />
 
                     {/* 02: SOUNDSCAPE */}
-                    <div className={styles.videoSection} style={{ gridColumn: 'span 12' }}>
+                    <div id="akustik" className={styles.videoSection} style={{ gridColumn: 'span 12' }}>
                         <div className={styles.videoWrapper}>
                             <video
                                 autoPlay
@@ -183,7 +155,7 @@ export default function Template6() {
                     </div>
 
                     {/* 03: MATERIALITAS */}
-                    <div className={styles.categoryHeader}>
+                    <div id="materialitas" className={styles.categoryHeader}>
                         <span style={{ fontFamily: 'Courier New', color: '#666' }}>03 //</span>
                         <h2 className={styles.catTitle}>MATERIALITAS</h2>
                     </div>
@@ -212,8 +184,9 @@ export default function Template6() {
 
                     {/* 04 & 05: RITUAL & GEOGRAFIS */}
                     <motion.div
+                        id="geo-ritual"
                         className={styles.block}
-                        style={{ gridColumn: 'span 12', height: '80vh', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        style={{ gridColumn: 'span 12', height: '80dvh', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         transition={{ duration: 1.5 }}
@@ -239,7 +212,7 @@ export default function Template6() {
                     </motion.div>
 
                     {/* 06: THE NITTY GRITTY */}
-                    <div className={styles.categoryHeader}>
+                    <div id="nitty-gritty" className={styles.categoryHeader}>
                         <span style={{ fontFamily: 'Courier New', color: '#666' }}>06 //</span>
                         <h2 className={styles.catTitle}>THE NITTY-GRITTY</h2>
                     </div>

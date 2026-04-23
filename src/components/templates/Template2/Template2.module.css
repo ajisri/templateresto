@@ -1,12 +1,12 @@
 .container {
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     background: #0a0a0a;
     overflow: hidden;
     position: relative;
     cursor: crosshair;
     /* Director's Cam focus */
-    font-family: var(--tm5-font-sans);
+    font-family: var(--font-body);
     --t2-accent: #b89a68;
     transition: background-color 1.2s var(--tm5-ease);
 }
@@ -35,15 +35,27 @@
 }
 
 .header h1 {
-    font-family: var(--tm5-font-display);
-    font-size: 3rem;
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
     margin-bottom: 0.2rem;
     letter-spacing: -0.02em;
 }
 
 .header p {
-    font-size: 1.2rem;
+    font-size: var(--text-xs);
     font-family: var(--font-body);
+    opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+    .header {
+        top: var(--space-4);
+        left: var(--space-4);
+    }
+
+    .header h1 {
+        font-size: var(--text-xl);
+    }
 }
 
 .controls {
@@ -76,7 +88,7 @@
 
 .viewport {
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -107,7 +119,7 @@
     align-items: center;
     border: 1px solid rgba(184, 154, 104, 0.2);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-    font-family: var(--tm5-font-display);
+    font-family: var(--font-display);
     font-weight: 500;
     transition: transform 0.8s var(--tm5-ease), box-shadow 0.8s var(--tm5-ease);
     user-select: none;
@@ -169,6 +181,12 @@
     opacity: 0.5;
 }
 
+@media (max-width: 768px) {
+    .heroMinimalUI {
+        display: none !important;
+    }
+}
+
 .hudLine {
     display: flex;
     flex-direction: column;
@@ -181,7 +199,7 @@
     font-size: 0.5rem;
     color: var(--t2-accent);
     letter-spacing: 0.4em;
-    font-weight: 700;
+    font-weight: 900;
 }
 
 .hudValue {

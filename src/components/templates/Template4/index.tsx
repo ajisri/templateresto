@@ -178,7 +178,9 @@ export default function Template4() {
                 </section>
 
                 <section className={styles.menuSection}>
-                    <motion.h2 className={styles.categoryTitle} initial={{ x: -100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }}>STARTERS</motion.h2>
+                    <div className="container-12">
+                        <motion.h2 className={styles.categoryTitle} initial={{ x: -50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }}>STARTERS</motion.h2>
+                    </div>
                     <div className={styles.menuGrid}>
                         {starters.map((item, i) => (
                             <MenuItem key={i} {...item} delay={i * 0.1} />
@@ -189,7 +191,9 @@ export default function Template4() {
                 <StickyScroll />
 
                 <section className={styles.menuSection}>
-                    <motion.h2 className={styles.categoryTitle} initial={{ x: -100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }}>MAINS</motion.h2>
+                    <div className="container-12">
+                        <motion.h2 className={styles.categoryTitle} initial={{ x: -50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }}>MAINS</motion.h2>
+                    </div>
                     <div className={styles.menuGrid}>
                         {mains.map((item, i) => (
                             <MenuItem key={i} {...item} delay={i * 0.1} />

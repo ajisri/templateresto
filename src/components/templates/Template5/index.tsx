@@ -1,5 +1,7 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import styles from './Lightship.module.css';
 
 /**
@@ -722,32 +724,50 @@ const Scene_StickyDepth = () => {
     );
 };
 
-// ─── SCENE 10 — PANORAMIC TRANSITION ─────────────────────────────
+// ─── SCENE 10 — THE SMOOTH SCROLL REVEAL (GSAP Integration) ──────
 const Scene10_Panoramic = () => {
     const containerRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start end", "end start"]
-    });
+    const imageContainerRef = useRef(null);
+    const imageRef = useRef(null);
 
-    const xBg = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+    useLayoutEffect(() => {
+        gsap.registerPlugin(ScrollTrigger);
+
+        const timeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: containerRef.current,
+                scrub: true,
+                start: "top bottom",
+                end: "bottom top",
+            },
+        });
+
+        // The container and image both grow as requested
+        timeline
+            .fromTo(imageContainerRef.current,
+                { scale: 0.4, borderRadius: "24px" },
+                { scale: 1, borderRadius: "0px" }
+            )
+            .fromTo(imageRef.current,
+                { scale: 1 },
+                { scale: 1.15 },
+                0
+            );
+
+        return () => {
+            timeline.kill();
+        };
+    }, []);
 
     return (
-        <section ref={containerRef} className={styles.scene10Minimal}>
-            <motion.img
-                src="/images/template5/hero-bg.jpg"
-                className={styles.panoramaImg}
-                style={{ x: xBg, opacity: 0.4 }}
-            />
-            <div className={styles.panoramaOverlayMinimal}>
-                <div className={styles.container}>
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        className={styles.minimalLabel}
-                    >
-                        THE FINAL SELECTION // APPROACHING ORIGIN
-                    </motion.div>
+        <section ref={containerRef} className={styles.scene10ContainerGrow}>
+            <div className={styles.scene10StickyBox}>
+                <div ref={imageContainerRef} className={styles.scene10ImageGrow}>
+                    <img
+                        ref={imageRef}
+                        src={'/images/template5/hero-bg.jpg'}
+                        alt="Growing scene"
+                    />
                 </div>
             </div>
         </section>

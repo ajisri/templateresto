@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import styles from './Template2.module.css';
 
@@ -9,6 +9,12 @@ export default function Template2() {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (window.innerWidth < 768) {
+            setScale(0.15);
+        }
+    }, []);
 
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
