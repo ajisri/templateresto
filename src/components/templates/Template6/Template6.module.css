@@ -314,3 +314,33 @@
     border-bottom-color: var(--c-accent);
     color: var(--c-accent);
 }
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .block {
+        grid-column: span 1 / -1 !important;
+    }
+
+    .catTitle {
+        font-size: var(--text-xl);
+    }
+
+    .largeInfoText {
+        font-size: var(--text-2xl);
+    }
+
+    .perspectiveText {
+        font-size: 5rem;
+    }
+
+    .videoTitle {
+        font-size: var(--text-2xl);
+    }
+
+    .ritualGlassBox h3 {
+        font-size: 2rem !important;
+    }
+}
+

@@ -699,6 +699,8 @@ const Scene_StickyDepth = () => {
     const y = useTransform(scrollYProgress, [0, 1], [0, -200]);
     const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 1.2]);
     const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+    const yText = useTransform(scrollYProgress, [0, 1], [150, -150]);
+    const opacityText = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
     return (
         <section ref={containerRef} className={styles.stickyGallerySection}>
@@ -712,9 +714,7 @@ const Scene_StickyDepth = () => {
                 <div className={styles.stickyTextLayer}>
                     <motion.h2
                         className={styles.stickyBigTitle}
-                        initial={{ x: -100, opacity: 0 }}
-                        whileInView={{ x: 0, opacity: 1 }}
-                        transition={{ duration: 1.5 }}
+                        style={{ y: yText, opacity: opacityText }}
                     >
                         UNVEILING THE <br /><span>INVISIBLE.</span>
                     </motion.h2>

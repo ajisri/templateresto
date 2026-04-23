@@ -125,6 +125,10 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  useEffect(() => {
     // Only init Lenis if not on Template 2 (Canvas) which handles its own drag/scroll
     if (location.pathname === '/template2') return;
 

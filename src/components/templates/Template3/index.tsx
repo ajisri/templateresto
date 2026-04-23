@@ -144,8 +144,16 @@ export default function Template3() {
                     trigger: zone.trigger,
                     start: "top 60%", // Earlier trigger
                     end: "bottom 40%",
-                    onEnter: () => gsap.to(`.${styles.container}`, { backgroundColor: zone.color, duration: 2, ease: "sine.inOut" }),
-                    onEnterBack: () => gsap.to(`.${styles.container}`, { backgroundColor: zone.color, duration: 2, ease: "sine.inOut" })
+                    onEnter: () => {
+                        if (component.current) {
+                            gsap.to(component.current, { backgroundColor: zone.color, duration: 2, ease: "sine.inOut" });
+                        }
+                    },
+                    onEnterBack: () => {
+                        if (component.current) {
+                            gsap.to(component.current, { backgroundColor: zone.color, duration: 2, ease: "sine.inOut" });
+                        }
+                    }
                 });
             });
 
@@ -168,6 +176,24 @@ export default function Template3() {
                     }
                 );
             });
+
+            // Pin THE ARCHIVE Header
+            const gallerySection = component.current?.querySelector(`.${styles.gallerySection}`);
+            const galleryHeader = gallerySection?.querySelector(`.${styles.galleryHeader}`);
+            if (gallerySection && galleryHeader) {
+                // Ensure header stays above images
+                (galleryHeader as HTMLElement).style.position = "relative";
+                (galleryHeader as HTMLElement).style.zIndex = "100";
+                
+                ScrollTrigger.create({
+                    trigger: gallerySection,
+                    start: "top 10%",
+                    end: "bottom 50%",
+                    pin: galleryHeader,
+                    pinSpacing: false,
+                    anticipatePin: 1
+                });
+            }
 
             // Text Reveal
             const reveals = gsap.utils.toArray('.text-reveal');
@@ -196,16 +222,19 @@ export default function Template3() {
             });
 
             // Fixed Background Parallax
-            gsap.to(".parallax-bg-fixed", {
-                y: "10%",
-                ease: "none",
-                scrollTrigger: {
-                    trigger: component.current,
-                    start: "top top",
-                    end: "bottom bottom",
-                    scrub: true
-                }
-            });
+            const bgFixed = component.current?.querySelector(".parallax-bg-fixed");
+            if (bgFixed) {
+                gsap.to(bgFixed, {
+                    y: "10%",
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: component.current,
+                        start: "top top",
+                        end: "bottom bottom",
+                        scrub: true
+                    }
+                });
+            }
 
             // Refresh ScrollTrigger to ensure proper heights are read after rendering
             setTimeout(() => {
@@ -219,9 +248,13 @@ export default function Template3() {
 
 
     const splitText = (text: string) => {
-        return text.split('').map((char, index) => (
-            <span key={index} className="hero-title-char" style={{ display: 'inline-block' }}>
-                {char === ' ' ? '\u00A0' : char}
+        return text.split(' ').map((word, wordIndex) => (
+            <span key={wordIndex} style={{ display: 'inline-block', whiteSpace: 'nowrap', marginRight: '0.2em' }}>
+                {word.split('').map((char, charIndex) => (
+                    <span key={charIndex} className="hero-title-char" style={{ display: 'inline-block' }}>
+                        {char}
+                    </span>
+                ))}
             </span>
         ));
     };
@@ -237,6 +270,7 @@ export default function Template3() {
     ];
 
     const [activeMenu, setActiveMenu] = useState<{ img: string, name: string } | null>(null);
+    const [selectedMenu, setSelectedMenu] = useState<{ img: string, name: string } | null>(null);
 
 
     // Strict 12-Column Grid Implementation based on Space & Layout guidelines
@@ -354,8 +388,14 @@ export default function Template3() {
                             style={{
                                 gridColumn: `${spot.start} / span ${spot.span}`,
                                 marginTop: `${spot.mt}px`,
-                                zIndex: 10 - (spot.id % 5)
+                                zIndex: 10 - (spot.id % 5),
+                                cursor: 'pointer'
                             }}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setSelectedMenu({ img: spot.img, name: `ARCHIVE // 0${spot.id}` });
+                            }}
+
                         >
                             <div className={styles.mImgWrap}>
                                 <div
@@ -383,8 +423,14 @@ export default function Template3() {
                             className={styles.menuItemRow}
                             onMouseEnter={() => setActiveMenu({ img: item.img, name: item.name })}
                             onMouseLeave={() => setActiveMenu(null)}
+                            onClick={(e) => {
+                                console.log("Item clicked:", item.name);
+                                e.preventDefault();
+                                setSelectedMenu({ img: item.img, name: item.name });
+                            }}
                             initial="initial"
                             whileHover="hovered"
+                            style={{ cursor: 'pointer', zIndex: 50 }}
                         >
                             <div className={styles.itemMeta}>0{i + 1} // {item.price}</div>
                             <div className={styles.itemNameWrap}>
@@ -416,8 +462,49 @@ export default function Template3() {
                         </motion.div>
                     ))}
                 </div>
-                <MenuImageFollower activeImage={activeMenu?.img || null} activeName={activeMenu?.name || null} />
+                <MenuImageFollower activeImage={!selectedMenu ? (activeMenu?.img || null) : null} activeName={activeMenu?.name || null} />
             </section>
+
+            {/* FULLSCREEN IMAGE OVERLAY */}
+            <motion.div
+                className={styles.imageOverlay}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: selectedMenu ? 1 : 0 }}
+                style={{ 
+                    pointerEvents: selectedMenu ? 'auto' : 'none',
+                    zIndex: 9999 // Ensure it covers everything
+                }}
+                onClick={() => setSelectedMenu(null)}
+            >
+                {selectedMenu && (
+                    <>
+                        <button className={styles.closeBtn} onClick={(e) => {
+                            e.stopPropagation();
+                            console.log("Close clicked");
+                            setSelectedMenu(null);
+                        }}>
+                            <span>CLOSE</span>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                <path d="M18 6L6 18M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <motion.div
+                            className={styles.overlayContent}
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className={styles.overlayImgWrap}>
+                                <img src={selectedMenu.img} alt={selectedMenu.name} className={styles.overlayImg} />
+                                <div className={styles.overlayInfo}>
+                                    <div className={styles.tagLabel}>COLLECTION</div>
+                                    <h3>{selectedMenu.name}</h3>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </motion.div>
 
             <footer className={styles.footer} style={{ background: 'transparent' }}>
                 <h2>LOCAL TAVERN</h2>
